@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Career Quest 🎯</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',Arial,sans-serif;background:#1a0533;color:#fff;min-height:100vh;overflow-x:hidden}
+
+  body::before{
+    content:'';position:fixed;inset:0;
+    background:radial-gradient(ellipse at 20% 20%,#3b0066 0%,transparent 60%),
+               radial-gradient(ellipse at 80% 80%,#00264d 0%,transparent 60%),#0d001f;
+    z-index:-2;
+  }
+
+  .screen{display:none;animation:fadeUp .4s ease}
+  .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ── ADMIN SCREEN ── */
+  .admin-card{
+    background:rgba(255,255,255,.07);backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.15);border-radius:20px;
+    padding:36px;width:100%;max-width:580px;
+  }
+  .admin-title{font-size:28px;font-weight:900;margin-bottom:6px}
+  .admin-sub{font-size:14px;color:#aaa;margin-bottom:24px}
+
+  .upload-zone{
+    border:2px dashed rgba(168,85,247,.5);border-radius:14px;
+    padding:36px 20px;text-align:center;cursor:pointer;
+    transition:border-color .2s,background .2s;margin-bottom:16px;
+  }
+  .upload-zone:hover{border-color:#a855f7;background:rgba(168,85,247,.08)}
+  .upload-zone input{display:none}
+  .upload-zone .uz-icon{font-size:40px;margin-bottom:8px}
+  .upload-zone .uz-text{font-size:15px;color:#ccc}
+  .upload-zone .uz-hint{font-size:12px;color:#777;margin-top:4px}
+
+  .email-preview{
+    background:rgba(0,0,0,.3);border-radius:10px;padding:12px 16px;
+    max-height:160px;overflow-y:auto;margin-bottom:16px;font-size:13px;
+    display:none;
+  }
+  .email-preview .ep-row{padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);color:#ccc}
+  .email-preview .ep-row:last-child{border:none}
+  .ep-count{font-size:13px;color:#80cbc4;margin-bottom:8px;font-weight:700}
+
+  .share-box{
+    background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.35);
+    border-radius:12px;padding:14px 16px;margin-bottom:16px;display:none;
+  }
+  .share-box .sb-label{font-size:12px;color:#aaa;margin-bottom:6px}
+  .share-url-row{display:flex;gap:8px;align-items:center}
+  .share-url{
+    flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);
+    border-radius:8px;padding:8px 12px;font-size:13px;color:#e2e8f0;
+    font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .btn-copy{
+    padding:8px 14px;background:#6366f1;border:none;border-radius:8px;
+    color:#fff;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;
+    transition:background .15s;
+  }
+  .btn-copy:hover{background:#4f46e5}
+  .btn-copy.copied{background:#43a047}
+
+  .btn-admin-save{
+    width:100%;padding:14px;font-size:17px;font-weight:900;
+    background:linear-gradient(135deg,#a855f7,#6366f1);border:none;border-radius:12px;
+    color:#fff;cursor:pointer;transition:transform .12s,opacity .15s;
+    opacity:.4;pointer-events:none;
+  }
+  .btn-admin-save.ready{opacity:1;pointer-events:auto}
+  .btn-admin-save.ready:hover{transform:scale(1.02)}
+
+  .admin-reset{font-size:12px;color:#666;text-align:center;margin-top:12px;cursor:pointer;text-decoration:underline}
+  .admin-reset:hover{color:#aaa}
+
+  /* admin PIN gate */
+  #adminGate{margin-bottom:20px}
+  .pin-row{display:flex;gap:8px;margin-top:10px}
+  .pin-input{
+    flex:1;padding:11px 14px;font-size:16px;font-family:inherit;font-weight:700;
+    background:rgba(255,255,255,.09);border:2px solid rgba(255,255,255,.15);
+    border-radius:10px;color:#fff;outline:none;transition:border-color .2s;letter-spacing:3px;
+  }
+  .pin-input:focus{border-color:#a855f7}
+  .pin-input.error{border-color:#e53935;animation:shake .3s}
+  .btn-pin{
+    padding:11px 20px;background:#a855f7;border:none;border-radius:10px;
+    color:#fff;font-size:15px;font-weight:900;cursor:pointer;transition:background .15s;
+  }
+  .btn-pin:hover{background:#9333ea}
+  .pin-error{font-size:12px;color:#ff6b6b;margin-top:6px;min-height:16px}
+  .admin-body{display:none}
+
+  /* ── LOGIN SCREEN ── */
+  .login-card{
+    background:rgba(255,255,255,.07);backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.15);border-radius:20px;
+    padding:40px 36px;width:100%;max-width:440px;text-align:center;
+  }
+  .login-logo{font-size:56px;margin-bottom:12px;animation:bounce 1.8s infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .login-title{font-size:26px;font-weight:900;margin-bottom:6px}
+  .login-sub{font-size:14px;color:#aaa;margin-bottom:28px}
+
+  .email-input{
+    width:100%;padding:14px 18px;font-size:16px;font-family:inherit;font-weight:700;
+    background:rgba(255,255,255,.09);border:2px solid rgba(255,255,255,.15);
+    border-radius:12px;color:#fff;outline:none;transition:border-color .2s;
+    margin-bottom:12px;
+  }
+  .email-input::placeholder{color:#666;font-weight:400}
+  .email-input:focus{border-color:#a855f7}
+  .email-input.error{border-color:#e53935;animation:shake .3s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  .login-error{font-size:13px;color:#ff6b6b;min-height:18px;margin-bottom:10px}
+
+  .btn-login{
+    width:100%;padding:14px;font-size:18px;font-weight:900;
+    background:linear-gradient(135deg,#ff6ec7,#a855f7);border:none;border-radius:12px;
+    color:#fff;cursor:pointer;box-shadow:0 6px 24px rgba(168,85,247,.4);
+    transition:transform .12s;
+  }
+  .btn-login:hover{transform:scale(1.03)}
+
+  /* ── START SCREEN ── */
+  .start-logo{font-size:72px;margin-bottom:8px;animation:bounce 1.6s infinite}
+  .start-title{font-size:52px;font-weight:900;background:linear-gradient(90deg,#ff6ec7,#ffd700,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;line-height:1.1}
+  .start-sub{font-size:20px;color:#ccc;margin:12px 0 8px;text-align:center}
+  .start-name{font-size:18px;color:#a5b4fc;margin-bottom:24px;font-weight:700}
+  .pill{display:inline-block;background:rgba(255,255,255,.12);border-radius:20px;padding:6px 16px;font-size:15px;margin:4px}
+  .btn-start{
+    background:linear-gradient(135deg,#ff6ec7,#a855f7);
+    border:none;border-radius:20px;padding:18px 56px;font-size:24px;font-weight:900;
+    color:#fff;cursor:pointer;box-shadow:0 6px 24px rgba(168,85,247,.5);
+    transition:transform .15s,box-shadow .15s;
+  }
+  .btn-start:hover{transform:scale(1.06);box-shadow:0 10px 32px rgba(168,85,247,.7)}
+
+  /* ── QUIZ SCREEN ── */
+  .quiz-header{width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .q-meta{display:flex;flex-direction:column;gap:2px}
+  .q-progress{font-size:16px;color:#ccc;font-weight:700}
+  .q-player{font-size:12px;color:#a5b4fc}
+
+  .timer-wrap{position:relative;width:72px;height:72px}
+  .timer-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+  .timer-ring-bg{fill:none;stroke:rgba(255,255,255,.15);stroke-width:6}
+  .timer-ring{fill:none;stroke:#ffd700;stroke-width:6;stroke-linecap:round;
+    stroke-dasharray:188;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear,stroke .5s}
+  .timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#ffd700}
+
+  .question-card{
+    background:rgba(255,255,255,.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);
+    border-radius:20px;padding:28px 36px;max-width:820px;width:100%;text-align:center;
+    font-size:26px;font-weight:800;line-height:1.4;margin-bottom:24px;
+    box-shadow:0 8px 40px rgba(0,0,0,.4);
+  }
+  .answers{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:820px;width:100%}
+  .ans-btn{
+    display:flex;align-items:center;gap:14px;
+    padding:20px 24px;border:none;border-radius:14px;
+    font-family:inherit;font-size:19px;font-weight:800;color:#fff;
+    cursor:pointer;text-align:left;
+    transition:transform .12s,filter .15s,opacity .3s;
+    box-shadow:0 4px 16px rgba(0,0,0,.3);
+  }
+  .ans-btn:hover:not(:disabled){transform:translateY(-3px) scale(1.02);filter:brightness(1.12)}
+  .ans-btn:disabled{cursor:default}
+  .ans-btn .icon{font-size:26px;flex-shrink:0}
+  .ans-btn.c0{background:linear-gradient(135deg,#e53935,#b71c1c)}
+  .ans-btn.c1{background:linear-gradient(135deg,#1e88e5,#0d47a1)}
+  .ans-btn.c2{background:linear-gradient(135deg,#fbc02d,#e65100)}
+  .ans-btn.c3{background:linear-gradient(135deg,#43a047,#1b5e20)}
+
+  /* ── STATS OVERLAY ── */
+  #stats-overlay{
+    display:none;position:fixed;inset:0;
+    background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
+    z-index:200;align-items:center;justify-content:center;
+  }
+  #stats-overlay.show{display:flex;animation:fadeUp .3s ease}
+  .stats-box{
+    background:linear-gradient(160deg,#1e0a3c,#0d1f3c);
+    border:1px solid rgba(255,255,255,.18);border-radius:20px;
+    padding:30px 36px;width:90%;max-width:560px;
+    box-shadow:0 12px 60px rgba(0,0,0,.6);
+  }
+  .stats-box h3{font-size:20px;margin-bottom:6px;color:#ffd700}
+  .your-pick{font-size:14px;color:#80cbc4;margin-bottom:18px}
+  .stat-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+  .stat-lbl{width:130px;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+  .stat-track{flex:1;background:rgba(255,255,255,.1);border-radius:8px;height:28px;overflow:hidden}
+  .stat-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding:0 10px;font-size:12px;font-weight:800;width:0;transition:width .7s cubic-bezier(.4,0,.2,1)}
+  .stat-cnt{width:32px;text-align:right;font-size:13px;color:#aaa}
+  .btn-next{
+    margin-top:22px;width:100%;padding:14px;font-size:17px;font-weight:900;
+    background:linear-gradient(135deg,#a855f7,#6366f1);border:none;border-radius:12px;
+    color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(99,102,241,.4);transition:transform .12s;
+  }
+  .btn-next:hover{transform:scale(1.03)}
+
+  /* ── LEADERBOARD ── */
+  .lb-title{font-size:44px;font-weight:900;margin-bottom:8px;background:linear-gradient(90deg,#ffd700,#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .lb-card{background:rgba(255,255,255,.08);border-radius:16px;overflow:hidden;width:100%;max-width:540px;margin:20px 0}
+  .lb-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+  .lb-row:last-child{border:none}
+  .lb-rank{font-size:22px;font-weight:900;width:36px;text-align:center}
+  .lb-name{flex:1;font-size:17px;font-weight:700}
+  .lb-score{font-size:20px;font-weight:900;color:#ffd700}
+  .lb-row.you{background:rgba(168,85,247,.25);border:1px solid rgba(168,85,247,.4)}
+  .btn-result{
+    margin-top:8px;padding:14px 44px;font-size:18px;font-weight:900;
+    background:linear-gradient(135deg,#ff6ec7,#a855f7);border:none;border-radius:14px;
+    color:#fff;cursor:pointer;box-shadow:0 6px 24px rgba(168,85,247,.4);transition:transform .12s;
+  }
+  .btn-result:hover{transform:scale(1.05)}
+
+  /* ── RESULT SCREEN ── */
+  .career-card{
+    background:rgba(255,255,255,.08);backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.15);border-radius:24px;
+    padding:36px;max-width:640px;width:100%;text-align:center;
+  }
+  .career-icon{font-size:72px;margin-bottom:12px;animation:bounce 2s infinite}
+  .career-title{font-size:34px;font-weight:900;background:linear-gradient(90deg,#ff6ec7,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+  .career-desc{font-size:17px;color:#ccc;line-height:1.6;margin-bottom:20px}
+  .roadmap{background:rgba(0,0,0,.3);border-radius:12px;padding:16px;font-size:15px;color:#80cbc4;line-height:1.8}
+  .roadmap strong{color:#ffd700}
+  .btn-replay{
+    margin-top:20px;padding:13px 40px;font-size:17px;font-weight:900;
+    background:linear-gradient(135deg,#43a047,#00bcd4);border:none;border-radius:12px;
+    color:#fff;cursor:pointer;transition:transform .12s;
+  }
+  .btn-replay:hover{transform:scale(1.05)}
+
+  @media(max-width:600px){
+    .start-title{font-size:36px}
+    .answers{grid-template-columns:1fr}
+    .question-card{font-size:20px;padding:20px}
+    .ans-btn{font-size:16px}
+    .admin-card,.login-card{padding:24px 20px}
+  }
+
+
+  /* ─────────────────────────────────────────────
+     DUA Edu brand theme override
+     Chỉ đổi giao diện/màu sắc, giữ nguyên luồng code quiz.
+     ───────────────────────────────────────────── */
+  :root{
+    --dua-green:#16A34A;
+    --dua-green-2:#22C55E;
+    --dua-teal:#0EA5A4;
+    --dua-navy:#123A34;
+    --dua-deep:#0F2E2A;
+    --dua-mint:#ECFDF3;
+    --dua-cream:#FBFFF8;
+    --dua-muted:#6B7F79;
+    --dua-border:rgba(18,58,52,.14);
+    --dua-card:rgba(255,255,255,.86);
+    --dua-shadow:0 24px 70px rgba(15,46,42,.16);
+  }
+
+  body{
+    background:#F6FFF9;
+    color:var(--dua-navy);
+  }
+  body::before{
+    background:
+      radial-gradient(ellipse at 12% 12%,rgba(34,197,94,.34) 0%,transparent 48%),
+      radial-gradient(ellipse at 86% 72%,rgba(14,165,164,.30) 0%,transparent 52%),
+      linear-gradient(135deg,#F6FFF9 0%,#E9FFF1 45%,#DFF8F4 100%);
+  }
+  body::after{
+    content:'DUA Edu';
+    position:fixed;
+    top:22px;
+    left:28px;
+    z-index:-1;
+    font-weight:900;
+    letter-spacing:.2px;
+    color:rgba(18,58,52,.08);
+    font-size:20px;
+  }
+
+  .admin-card,.login-card,.question-card,.stats-box,.lb-card,.career-card{
+    background:var(--dua-card);
+    border:1px solid var(--dua-border);
+    box-shadow:var(--dua-shadow);
+    color:var(--dua-navy);
+  }
+  .admin-card,.login-card,.career-card,.question-card{
+    backdrop-filter:blur(16px);
+  }
+
+  .admin-title,.login-title,.q-progress,.lb-name,.career-desc,.stat-lbl{
+    color:var(--dua-navy);
+  }
+  .admin-sub,.login-sub,.start-sub,.q-progress,.stat-cnt,.share-box .sb-label{
+    color:var(--dua-muted);
+  }
+  .start-name,.q-player,.ep-count,.your-pick,.roadmap{
+    color:var(--dua-teal);
+  }
+
+  .login-logo,.start-logo{
+    font-size:0;
+    animation:none;
+    margin-bottom:18px;
+  }
+  .login-logo::before,.start-logo::before{
+    content:'DUA Edu';
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:118px;
+    height:48px;
+    padding:0 18px;
+    border-radius:999px;
+    background:linear-gradient(135deg,var(--dua-green-2),var(--dua-teal));
+    color:#fff;
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:.1px;
+    box-shadow:0 12px 28px rgba(22,163,74,.26);
+  }
+
+  .start-title,.career-title{
+    background:linear-gradient(90deg,var(--dua-green),var(--dua-teal),#0F766E);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .lb-title{
+    background:linear-gradient(90deg,var(--dua-green),var(--dua-teal));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+
+  .email-input,.pin-input,.share-url{
+    background:rgba(255,255,255,.92);
+    border:2px solid rgba(18,58,52,.14);
+    color:var(--dua-navy);
+  }
+  .email-input::placeholder{color:#8EA39D}
+  .email-input:focus,.pin-input:focus{
+    border-color:var(--dua-green);
+    box-shadow:0 0 0 4px rgba(34,197,94,.14);
+  }
+
+  .upload-zone{
+    border-color:rgba(22,163,74,.34);
+    background:rgba(236,253,243,.62);
+  }
+  .upload-zone:hover{
+    border-color:var(--dua-green);
+    background:rgba(34,197,94,.10);
+  }
+  .upload-zone .uz-text{color:var(--dua-navy)}
+  .upload-zone .uz-hint,.admin-reset{color:var(--dua-muted)}
+  .admin-reset:hover{color:var(--dua-green)}
+
+  .email-preview,.roadmap{
+    background:rgba(236,253,243,.78);
+  }
+  .email-preview .ep-row{
+    color:var(--dua-navy);
+    border-bottom:1px solid rgba(18,58,52,.08);
+  }
+  .share-box{
+    background:rgba(14,165,164,.10);
+    border-color:rgba(14,165,164,.24);
+  }
+
+  .btn-login,.btn-start,.btn-result,.btn-next,.btn-admin-save,.btn-pin,.btn-copy,.btn-replay{
+    background:linear-gradient(135deg,var(--dua-green-2),var(--dua-teal));
+    color:#fff;
+    box-shadow:0 12px 28px rgba(22,163,74,.24);
+  }
+  .btn-login:hover,.btn-start:hover,.btn-result:hover,.btn-next:hover,.btn-admin-save.ready:hover,.btn-pin:hover,.btn-copy:hover,.btn-replay:hover{
+    box-shadow:0 16px 34px rgba(14,165,164,.28);
+  }
+  .btn-copy.copied{background:var(--dua-green)}
+  .btn-login:disabled{cursor:not-allowed}
+
+  .pill{
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(18,58,52,.10);
+    color:var(--dua-navy);
+    box-shadow:0 6px 18px rgba(18,58,52,.06);
+  }
+
+  .timer-ring-bg{stroke:rgba(18,58,52,.12)}
+  .timer-ring{stroke:var(--dua-green)}
+  .timer-num{color:var(--dua-green)}
+
+  .ans-btn{
+    box-shadow:0 12px 26px rgba(18,58,52,.16);
+    color:#fff;
+  }
+  .ans-btn.c0{background:linear-gradient(135deg,#F97316,#EA580C)}
+  .ans-btn.c1{background:linear-gradient(135deg,#14B8A6,#0F766E)}
+  .ans-btn.c2{background:linear-gradient(135deg,#EAB308,#CA8A04)}
+  .ans-btn.c3{background:linear-gradient(135deg,#22C55E,#15803D)}
+
+  #stats-overlay{
+    background:rgba(15,46,42,.32);
+  }
+  .stats-box{
+    background:rgba(255,255,255,.94);
+  }
+  .stats-box h3{color:var(--dua-green)}
+  .stat-track{background:rgba(18,58,52,.08)}
+  .stat-fill{color:#fff}
+
+  .lb-row{border-bottom:1px solid rgba(18,58,52,.08)}
+  .lb-score{color:var(--dua-green)}
+  .lb-row.you{
+    background:rgba(34,197,94,.12);
+    border:1px solid rgba(22,163,74,.22);
+  }
+  .career-icon{filter:drop-shadow(0 12px 20px rgba(22,163,74,.22))}
+  .roadmap strong{color:var(--dua-green)}
+
+  .login-error,.pin-error{
+    color:#EF4444;
+  }
+  .email-input.error,.pin-input.error{
+    border-color:#EF4444;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ══ ADMIN SETUP ══ -->
+<div id="admin" class="screen">
+  <div class="admin-card">
+    <div class="admin-title">⚙️ Thiết lập buổi học</div>
+
+    <!-- PIN gate -->
+    <div id="adminGate">
+      <div class="admin-sub">Nhập mã PIN để tiếp tục.</div>
+      <div class="pin-row">
+        <input class="pin-input" id="pinInput" type="password" placeholder="••••••"
+               onkeydown="if(event.key==='Enter')checkPin()">
+        <button class="btn-pin" onclick="checkPin()">Xác nhận</button>
+      </div>
+      <div class="pin-error" id="pinError"></div>
+    </div>
+
+    <!-- Admin body (shown after PIN) -->
+    <div class="admin-body" id="adminBody">
+    <div class="admin-sub">Upload file Excel chứa danh sách email học viên được phép tham gia.</div>
+
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('xlFile').click()">
+      <input type="file" id="xlFile" accept=".xlsx,.xls,.csv" onchange="handleFile(this)">
+      <div class="uz-icon">📂</div>
+      <div class="uz-text">Kéo thả hoặc <strong>nhấn để chọn file</strong></div>
+      <div class="uz-hint">Hỗ trợ .xlsx · .xls · .csv — cột email có thể đặt tên tùy ý</div>
+    </div>
+
+    <div class="email-preview" id="emailPreview">
+      <div class="ep-count" id="epCount"></div>
+      <div id="epList"></div>
+    </div>
+
+    <div class="share-box" id="shareBox">
+      <div class="sb-label">🔗 Link chia sẻ cho học viên</div>
+      <div class="share-url-row">
+        <div class="share-url" id="shareUrl"></div>
+        <button class="btn-copy" id="btnCopy" onclick="copyLink()">Sao chép</button>
+      </div>
+    </div>
+
+    <button class="btn-admin-save" id="btnSave" onclick="saveAndActivate()">
+      ✅ Lưu danh sách &amp; kích hoạt
+    </button>
+    <div class="admin-reset" onclick="resetAll()">Xoá danh sách cũ &amp; bắt đầu lại</div>
+    </div><!-- /adminBody -->
+  </div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+<div id="login" class="screen">
+  <div class="login-card">
+    <div class="login-logo">🎯</div>
+    <div class="login-title">AI Career Quest</div>
+    <div class="login-sub">Nhập email đã đăng ký để tham gia</div>
+    <input class="email-input" id="emailInput" type="email" placeholder="email@company.com"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-error" id="loginError"></div>
+    <button class="btn-login" onclick="doLogin()">Vào chơi 🚀</button>
+  </div>
+</div>
+
+<!-- ══ START ══ -->
+<div id="start" class="screen">
+  <div class="start-logo">🎯</div>
+  <div class="start-title">AI CAREER QUEST</div>
+  <div class="start-sub">Xin chào,</div>
+  <div class="start-name" id="welcomeName"></div>
+  <div style="margin-bottom:28px">
+    <span class="pill">💡 21 câu hỏi</span>
+    <span class="pill">⏱ 30 giây / câu</span>
+    <span class="pill">⚡ Tính điểm theo tốc độ</span>
+  </div>
+  <button class="btn-start" onclick="startGame()">🚀 BẮT ĐẦU NGAY</button>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <div class="q-meta">
+      <div class="q-progress" id="progress">Câu 1/3</div>
+      <div class="q-player" id="qPlayer"></div>
+    </div>
+    <div class="timer-wrap">
+      <svg viewBox="0 0 72 72" width="72" height="72">
+        <circle class="timer-ring-bg" cx="36" cy="36" r="30"/>
+        <circle class="timer-ring" id="timerRing" cx="36" cy="36" r="30"/>
+      </svg>
+      <div class="timer-num" id="timer">30</div>
+    </div>
+  </div>
+
+  <div class="question-card" id="question"></div>
+
+  <div class="answers">
+    <button class="ans-btn c0" onclick="answer(0)" id="a0"><span class="icon">🔴</span><span id="t0"></span></button>
+    <button class="ans-btn c1" onclick="answer(1)" id="a1"><span class="icon">🔵</span><span id="t1"></span></button>
+    <button class="ans-btn c2" onclick="answer(2)" id="a2"><span class="icon">🟡</span><span id="t2"></span></button>
+    <button class="ans-btn c3" onclick="answer(3)" id="a3"><span class="icon">🟢</span><span id="t3"></span></button>
+  </div>
+</div>
+
+<!-- ══ STATS OVERLAY ══ -->
+<div id="stats-overlay">
+  <div class="stats-box">
+    <h3>📊 Lớp đang chọn gì?</h3>
+    <div class="your-pick" id="your-pick"></div>
+    <div id="stat-bars"></div>
+    <button class="btn-next" id="btn-next" onclick="continueAfterStats()">Câu tiếp theo ▶</button>
+  </div>
+</div>
+
+<!-- ══ LEADERBOARD ══ -->
+<div id="leaderboard" class="screen">
+  <div class="lb-title">🏆 LEADERBOARD</div>
+  <div class="lb-card">
+    <div class="lb-row you">
+      <div class="lb-rank">🥇</div>
+      <div class="lb-name" id="lbName">Bạn</div>
+      <div class="lb-score" id="scoreShow">0</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank">🥈</div>
+      <div class="lb-name">Career_Bot</div>
+      <div class="lb-score">850</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank">🥉</div>
+      <div class="lb-name">Trung bình lớp</div>
+      <div class="lb-score">720</div>
+    </div>
+  </div>
+  <button class="btn-result" onclick="showResult()">Xem nghề phù hợp ✨</button>
+</div>
+
+<!-- ══ RESULT ══ -->
+<div id="result" class="screen">
+  <div class="career-card">
+    <div class="career-icon" id="careerIcon"></div>
+    <div class="career-title" id="careerTitle"></div>
+    <div class="career-desc" id="careerDesc"></div>
+    <div class="roadmap">
+      <strong>Roadmap đề xuất:</strong><br>
+      SQL → Power BI → Python → AI Agent → Automation
+    </div>
+    <button class="btn-replay" onclick="goReplay()">🔄 Chơi lại</button>
+  </div>
+</div>
+
+<script>
+// ── Constants ──
+const ICONS=['🔴','🔵','🟡','🟢'];
+const COLORS=['#F97316','#0EA5A4','#EAB308','#22C55E'];
+const LS_KEY='quiz_email_list';
+const ADMIN_PIN='onpoint2024'; // đổi PIN tại đây
+
+const questions=[
+  {q:"Bạn thích công việc nào nhất?",a:["Phân tích dữ liệu","Điều phối dự án","Lập trình AI","Sáng tạo nội dung"],t:["data","biz","eng","creative"]},
+  {q:"Công ty mất tiền do hoàn hàng nhiều, bạn sẽ làm gì?",a:["Phân tích KPI hoàn hàng","Họp các stakeholder","Xây fraud detector AI","Thiết kế lại quy trình"],t:["data","biz","eng","creative"]},
+  {q:"Công cụ nào bạn muốn học nhất?",a:["Power BI","Jira / Notion","Python / LangChain","ChatGPT / Midjourney"],t:["data","biz","eng","creative"]},
+
+  // ── Data Entry Level 1 ──
+  {q:"SQL dùng để làm gì?",a:["Truy vấn & xử lý dữ liệu từ database","Thiết kế giao diện web","Vẽ biểu đồ tự động","Gửi email hàng loạt"],t:["data","creative","biz","eng"]},
+  {q:"Bạn có 1 triệu dòng dữ liệu bán hàng. Bước đầu tiên bạn làm gì?",a:["Làm sạch & kiểm tra dữ liệu null","Làm dashboard ngay","Chạy mô hình AI luôn","Gửi report cho sếp"],t:["data","biz","eng","creative"]},
+  {q:"KPI nào quan trọng nhất để đo hiệu quả bán hàng trên Shopee?",a:["Conversion Rate & GMV","Số lượng follower shop","Số lần livestream","Độ dài mô tả sản phẩm"],t:["data","creative","biz","eng"]},
+  {q:"Sếp hỏi: 'Tháng này doanh thu giảm, tại sao?' — bạn làm gì đầu tiên?",a:["Drill down theo kênh / SKU / thời gian","Trả lời ngay theo cảm tính","Chờ phòng khác báo cáo","Đổ lỗi cho thị trường"],t:["data","creative","biz","eng"]},
+  {q:"Pivot Table trong Excel dùng để làm gì?",a:["Tổng hợp & phân tích dữ liệu nhanh","Vẽ hình minh họa","Gửi email tự động","Kết nối API"],t:["data","creative","eng","biz"]},
+  {q:"Data Analyst khác Data Scientist ở điểm nào chính?",a:["Analyst tập trung insight hiện tại; Scientist xây mô hình dự báo","Analyst code nhiều hơn","Data Scientist chỉ dùng Excel","Không có sự khác biệt"],t:["data","eng","creative","biz"]},
+  {q:"Bạn muốn bắt đầu học data từ đâu?",a:["SQL + Excel cơ bản","Python ngay từ đầu","Power BI luôn","Chưa biết bắt đầu từ đâu"],t:["data","eng","biz","creative"]},
+  {q:"Dashboard tốt cần có yếu tố gì quan trọng nhất?",a:["Insight rõ ràng, dễ ra quyết định","Màu sắc đẹp bắt mắt","Càng nhiều biểu đồ càng tốt","Dùng được trên mọi thiết bị"],t:["data","creative","biz","eng"]},
+  {q:"Trong e-commerce, 'churn rate' có nghĩa là gì?",a:["Tỷ lệ khách hàng rời bỏ / không mua lại","Tốc độ giao hàng trung bình","Chi phí quảng cáo mỗi đơn","Tỷ lệ hoàn hàng"],t:["data","biz","eng","creative"]},
+
+  // ── Career Roadmap & Salary ──
+  {q:"Lộ trình học Data chuẩn nhất cho người mới bắt đầu là gì?",a:["Excel → SQL → Power BI → Python","Python → AI → SQL → Excel","Power BI → Python → SQL → Excel","AI → SQL → Excel → Power BI"],t:["data","eng","biz","creative"]},
+  {q:"Sau bao lâu học data, bạn có thể đi làm được (fresher)?",a:["3 – 6 tháng nếu học đúng hướng","Cần ít nhất 2 năm","Phải có bằng đại học IT","Không cần học, tự học trên YouTube đủ rồi"],t:["data","biz","creative","eng"]},
+  {q:"Mức lương fresher Data Analyst tại Việt Nam thường là bao nhiêu?",a:["8 – 15 triệu VND/tháng","2 – 4 triệu VND/tháng","30 – 50 triệu VND/tháng","Dưới 5 triệu VND/tháng"],t:["data","creative","biz","eng"]},
+  {q:"Data Analyst có 2–3 năm kinh nghiệm tại TP.HCM có thể kỳ vọng mức lương khoảng bao nhiêu?",a:["18 – 30 triệu VND/tháng","5 – 8 triệu VND/tháng","50 – 80 triệu VND/tháng","Giống fresher, không tăng nhiều"],t:["data","creative","biz","eng"]},
+  {q:"Sau vị trí Data Analyst, bước thăng tiến tiếp theo thường là gì?",a:["Senior Analyst → Data Lead / Analytics Manager","Chuyển sang làm kế toán","Về làm nông nghiệp","Mãi là Analyst không lên được"],t:["data","biz","creative","eng"]},
+  {q:"Kỹ năng nào giúp Data Analyst tăng lương nhanh nhất?",a:["SQL nâng cao + Python + kể chuyện bằng data","Biết nhiều phần mềm văn phòng","Có nhiều chứng chỉ online","Làm thêm giờ nhiều hơn"],t:["data","biz","creative","eng"]},
+  {q:"Ngành nào tại Việt Nam đang trả lương cao nhất cho Data Analyst?",a:["Fintech / Banking / E-commerce","Giáo dục truyền thống","Nhà hàng & F&B","Dệt may & sản xuất"],t:["data","biz","eng","creative"]},
+  {q:"Data Scientist tại Việt Nam có thể kiếm được bao nhiêu sau 3–5 năm kinh nghiệm?",a:["40 – 80 triệu VND/tháng","10 – 12 triệu VND/tháng","Dưới 20 triệu VND/tháng","Không có nhu cầu tuyển dụng ở VN"],t:["data","creative","biz","eng"]}
+];
+
+// ── State ──
+let emailList=[];      // normalised lowercase emails
+let currentPlayer=''; // email of logged-in student
+let score={data:0,biz:0,eng:0,creative:0};
+let current=0;
+let time=30;
+let timerInterval;
+let parsedEmails=[];   // staging before save
+const CIRCUMFERENCE=2*Math.PI*30;
+
+// ── Boot ──
+(function init(){
+  const isAdmin=location.search.includes('admin');
+  const stored=localStorage.getItem(LS_KEY);
+  if(isAdmin){
+    show('admin');
+    // If PIN was already verified this session, skip gate
+    if(sessionStorage.getItem('admin_ok')){
+      unlockAdmin();
+      if(stored){
+        emailList=JSON.parse(stored);
+        renderPreview(emailList);
+        showShareBox();
+        document.getElementById('btnSave').classList.add('ready');
+        document.getElementById('btnSave').innerHTML='✅ Danh sách đã lưu — kích hoạt lại';
+      }
+    }
+  } else {
+    if(stored){
+      emailList=JSON.parse(stored);
+    }
+    // Always show login — students just enter email
+    show('login');
+    if(!stored){
+      document.getElementById('loginError').textContent='⚠️ Giảng viên chưa kích hoạt buổi học.';
+      document.getElementById('emailInput').disabled=true;
+      document.querySelector('.btn-login').disabled=true;
+      document.querySelector('.btn-login').style.opacity='0.4';
+    }
+  }
+})();
+
+// ── Admin PIN ──
+function checkPin(){
+  const val=document.getElementById('pinInput').value;
+  if(val===ADMIN_PIN){
+    sessionStorage.setItem('admin_ok','1');
+    unlockAdmin();
+  } else {
+    document.getElementById('pinError').textContent='PIN không đúng.';
+    document.getElementById('pinInput').classList.add('error');
+    setTimeout(()=>document.getElementById('pinInput').classList.remove('error'),400);
+  }
+}
+
+function unlockAdmin(){
+  document.getElementById('adminGate').style.display='none';
+  document.getElementById('adminBody').style.display='block';
+}
+
+// ══ ADMIN LOGIC ══
+
+function handleFile(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      parsedEmails=extractEmails(rows);
+      if(parsedEmails.length===0){
+        alert('Không tìm thấy email hợp lệ trong file. Hãy kiểm tra lại.');
+        return;
+      }
+      renderPreview(parsedEmails);
+      showShareBox();
+      document.getElementById('btnSave').classList.add('ready');
+      document.getElementById('btnSave').textContent=`✅ Lưu ${parsedEmails.length} học viên &amp; kích hoạt`;
+      // Update label properly
+      document.getElementById('btnSave').innerHTML=`✅ Lưu ${parsedEmails.length} học viên &amp; kích hoạt`;
+    } catch(err){
+      alert('Lỗi đọc file: '+err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+  // Reset upload zone label
+  document.querySelector('.uz-text').innerHTML=`<strong>${file.name}</strong> đã tải xong`;
+}
+
+function extractEmails(rows){
+  if(rows.length===0) return [];
+  // Try to find a column that looks like emails
+  // Check header row first
+  const header=rows[0].map(c=>String(c).toLowerCase().trim());
+  let col=-1;
+  for(let i=0;i<header.length;i++){
+    if(header[i].includes('email') || header[i].includes('mail')){col=i;break;}
+  }
+  const startRow=col>=0?1:0;
+  if(col<0){
+    // No header found — scan all cells for email pattern
+    const emails=[];
+    for(const row of rows){
+      for(const cell of row){
+        const v=String(cell).trim().toLowerCase();
+        if(isEmail(v)) emails.push(v);
+      }
+    }
+    return [...new Set(emails)];
+  }
+  const emails=[];
+  for(let r=startRow;r<rows.length;r++){
+    const v=String(rows[r][col]||'').trim().toLowerCase();
+    if(isEmail(v)) emails.push(v);
+  }
+  return [...new Set(emails)];
+}
+
+function isEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)}
+
+function renderPreview(list){
+  const preview=document.getElementById('emailPreview');
+  document.getElementById('epCount').textContent=`${list.length} email tìm thấy`;
+  document.getElementById('epList').innerHTML=list.slice(0,50).map(e=>`<div class="ep-row">${e}</div>`).join('')
+    +(list.length>50?`<div class="ep-row" style="color:#666">… và ${list.length-50} email khác</div>`:'');
+  preview.style.display='block';
+}
+
+function showShareBox(){
+  const box=document.getElementById('shareBox');
+  const url=location.href.replace(/[?#].*/,'');
+  document.getElementById('shareUrl').textContent=url;
+  box.style.display='block';
+}
+
+function copyLink(){
+  const url=document.getElementById('shareUrl').textContent;
+  navigator.clipboard.writeText(url).then(()=>{
+    const btn=document.getElementById('btnCopy');
+    btn.textContent='Đã sao chép ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Sao chép';btn.classList.remove('copied');},2000);
+  });
+}
+
+function saveAndActivate(){
+  const toSave=parsedEmails.length>0?parsedEmails:emailList;
+  localStorage.setItem(LS_KEY,JSON.stringify(toSave));
+  document.getElementById('btnSave').innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+}
+
+function resetAll(){
+  if(confirm('Xoá toàn bộ danh sách email đã lưu?')){
+    localStorage.removeItem(LS_KEY);
+    location.reload();
+  }
+}
+
+// ── Drag-and-drop on upload zone ──
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='#16A34A';zone.style.background='rgba(34,197,94,.12)'});
+zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background=''});
+zone.addEventListener('drop',e=>{
+  e.preventDefault();
+  zone.style.borderColor='';zone.style.background='';
+  const file=e.dataTransfer.files[0];
+  if(file){const dt=new DataTransfer();dt.items.add(file);document.getElementById('xlFile').files=dt.files;handleFile(document.getElementById('xlFile'));}
+});
+
+// ══ LOGIN LOGIC ══
+
+function doLogin(){
+  const val=document.getElementById('emailInput').value.trim().toLowerCase();
+  const err=document.getElementById('loginError');
+  const inp=document.getElementById('emailInput');
+  if(!isEmail(val)){
+    err.textContent='Vui lòng nhập đúng định dạng email.';
+    inp.classList.add('error');
+    setTimeout(()=>inp.classList.remove('error'),400);
+    return;
+  }
+  if(!emailList.includes(val)){
+    err.textContent='Email này không có trong danh sách đăng ký.';
+    inp.classList.add('error');
+    setTimeout(()=>inp.classList.remove('error'),400);
+    return;
+  }
+  currentPlayer=val;
+  document.getElementById('welcomeName').textContent=val;
+  document.getElementById('qPlayer').textContent=val;
+  document.getElementById('lbName').textContent=val.split('@')[0];
+  err.textContent='';
+  show('start');
+}
+
+// ══ QUIZ LOGIC ══
+
+function startGame(){
+  score={data:0,biz:0,eng:0,creative:0};
+  current=0;
+  show('quiz');
+  loadQuestion();
+}
+
+function loadQuestion(){
+  const q=questions[current];
+  document.getElementById('progress').textContent=`Câu ${current+1}/${questions.length}`;
+  document.getElementById('question').textContent=q.q;
+  for(let i=0;i<4;i++){
+    document.getElementById('t'+i).textContent=q.a[i];
+    const btn=document.getElementById('a'+i);
+    btn.disabled=false;btn.style.opacity='1';btn.style.transform='';
+  }
+  time=30;updateTimerUI();
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    time--;updateTimerUI();
+    if(time<=0){clearInterval(timerInterval);answer(-1);}
+  },1000);
+}
+
+function updateTimerUI(){
+  document.getElementById('timer').textContent=time;
+  const ring=document.getElementById('timerRing');
+  ring.style.strokeDashoffset=CIRCUMFERENCE*(1-time/30);
+  ring.style.stroke=time>10?'#16A34A':time>5?'#EAB308':'#EF4444';
+}
+
+function answer(chosen){
+  clearInterval(timerInterval);
+  for(let i=0;i<4;i++){
+    const btn=document.getElementById('a'+i);
+    btn.disabled=true;
+    btn.style.opacity=chosen===i?'1':'0.35';
+  }
+  if(chosen>=0) score[questions[current].t[chosen]]+=100+time*10;
+  showStats(chosen);
+}
+
+function showStats(chosen){
+  const q=questions[current];
+  const total=Math.floor(Math.random()*20)+15;
+  const votes=[0,0,0,0];
+  if(chosen>=0) votes[chosen]++;
+  for(let n=1;n<total;n++) votes[Math.floor(Math.random()*4)]++;
+
+  let html='';
+  for(let i=0;i<4;i++){
+    const pct=Math.round(votes[i]/total*100);
+    html+=`<div class="stat-row">
+      <div class="stat-lbl" title="${q.a[i]}">${ICONS[i]} ${q.a[i]}</div>
+      <div class="stat-track"><div class="stat-fill" style="background:${COLORS[i]}" data-pct="${pct}">${pct}%</div></div>
+      <div class="stat-cnt">${votes[i]}</div>
+    </div>`;
+  }
+  document.getElementById('stat-bars').innerHTML=html;
+  document.getElementById('your-pick').innerHTML=
+    chosen>=0?`Bạn chọn: <strong>${q.a[chosen]}</strong>`:'⏰ Hết giờ — bạn không kịp chọn';
+  const isLast=(current+1>=questions.length);
+  document.getElementById('btn-next').textContent=isLast?'Xem kết quả 🏆':'Câu tiếp theo ▶';
+  document.getElementById('stats-overlay').classList.add('show');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.querySelectorAll('.stat-fill').forEach(el=>{el.style.width=el.dataset.pct+'%';});
+  }));
+}
+
+function continueAfterStats(){
+  document.getElementById('stats-overlay').classList.remove('show');
+  current++;
+  if(current<questions.length){
+    loadQuestion();
+  } else {
+    document.getElementById('scoreShow').textContent=Math.max(...Object.values(score));
+    show('leaderboard');
+  }
+}
+
+function showResult(){
+  const career=Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
+  const map={
+    data:{icon:'📊',title:'Data Analyst',desc:'Bạn có tư duy phân tích sắc bén. Nghề này phù hợp với người thích biến số liệu thành insight và xây dựng dashboard để hỗ trợ ra quyết định.'},
+    biz:{icon:'💼',title:'Business Analyst',desc:'Bạn giỏi kết nối giữa business và công nghệ. Nghề này cần người hiểu cả quy trình kinh doanh lẫn cách công nghệ có thể cải thiện nó.'},
+    eng:{icon:'⚙️',title:'Tech / Engineer',desc:'Bạn thích xây dựng hệ thống và lập trình. Nghề này là nền tảng để tạo ra các công cụ thực sự hoạt động trong production.'},
+    creative:{icon:'🎨',title:'Content Creator',desc:'Bạn mạnh về sáng tạo và giao tiếp. Nghề này phù hợp với người thích tạo nội dung, hình ảnh, và chiến dịch marketing nổi bật.'}
+  };
+  const m=map[career];
+  document.getElementById('careerIcon').textContent=m.icon;
+  document.getElementById('careerTitle').textContent=m.title;
+  document.getElementById('careerDesc').textContent=m.desc;
+  show('result');
+}
+
+function goReplay(){location.href=location.href.replace(/[?#].*/,'')}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
