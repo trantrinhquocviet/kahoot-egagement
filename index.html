@@ -557,22 +557,9 @@
 <!-- ══ LEADERBOARD ══ -->
 <div id="leaderboard" class="screen">
   <div class="lb-title">🏆 LEADERBOARD</div>
-  <div class="lb-card">
-    <div class="lb-row you">
-      <div class="lb-rank">🥇</div>
-      <div class="lb-name" id="lbName">Bạn</div>
-      <div class="lb-score" id="scoreShow">0</div>
-    </div>
-    <div class="lb-row">
-      <div class="lb-rank">🥈</div>
-      <div class="lb-name">Career_Bot</div>
-      <div class="lb-score">850</div>
-    </div>
-    <div class="lb-row">
-      <div class="lb-rank">🥉</div>
-      <div class="lb-name">Trung bình lớp</div>
-      <div class="lb-score">720</div>
-    </div>
+  <div style="font-size:18px;font-weight:700;color:#6B7F79;margin-bottom:4px">Điểm của bạn: <span id="scoreShow" style="color:#16A34A;font-size:22px">0</span></div>
+  <div class="lb-card" id="lbCard">
+    <div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Đang tải...</div>
   </div>
   <button class="btn-result" onclick="showResult()">Xem nghề phù hợp ✨</button>
 </div>
@@ -597,6 +584,43 @@ const ICONS=['🔴','🔵','🟡','🟢'];
 const COLORS=['#F97316','#0EA5A4','#EAB308','#22C55E'];
 const LS_KEY='quiz_email_list';
 const ADMIN_PIN='onpoint2024'; // đổi PIN tại đây
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0Ep4qw-Z_FSq0uU8Ns8QeGpqVxC_ZmJiV4ouZ5f57l6Aar33mVUxIRvW5jMge7Rn8/exec';
+
+async function logImportToSheet(emails) {
+  if (!APPS_SCRIPT_URL) return;
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'importAccounts', emails })
+    });
+  } catch (err) {
+    console.warn('Không ghi được Account:', err);
+  }
+}
+
+async function saveScoreToSheet(email, scoreObj) {
+  if (!APPS_SCRIPT_URL) return;
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'saveScore', email, score: scoreObj })
+    });
+  } catch (err) {
+    console.warn('Không ghi được Score:', err);
+  }
+}
+
+async function fetchLeaderboard() {
+  if (!APPS_SCRIPT_URL) return [];
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?action=getScores');
+    const json = await res.json();
+    return json.scores || [];
+  } catch (err) {
+    console.warn('Không lấy được leaderboard:', err);
+    return [];
+  }
+}
 
 const questions=[
   {q:"Bạn thích công việc nào nhất?",a:["Phân tích dữ liệu","Điều phối dự án","Lập trình AI","Sáng tạo nội dung"],t:["data","biz","eng","creative"]},
@@ -703,6 +727,7 @@ function handleFile(input){
       }
       renderPreview(parsedEmails);
       showShareBox();
+      logImportToSheet(parsedEmails);
       document.getElementById('btnSave').classList.add('ready');
       document.getElementById('btnSave').textContent=`✅ Lưu ${parsedEmails.length} học viên &amp; kích hoạt`;
       // Update label properly
@@ -893,15 +918,41 @@ function showStats(chosen){
   }));
 }
 
-function continueAfterStats(){
+async function continueAfterStats(){
   document.getElementById('stats-overlay').classList.remove('show');
   current++;
   if(current<questions.length){
     loadQuestion();
   } else {
-    document.getElementById('scoreShow').textContent=Math.max(...Object.values(score));
+    await saveScoreToSheet(currentPlayer, score);
+    const myTotal = Math.max(...Object.values(score));
+    document.getElementById('scoreShow').textContent = myTotal;
     show('leaderboard');
+    renderLeaderboard(myTotal);
   }
+}
+
+async function renderLeaderboard(myTotal){
+  const lbCard = document.getElementById('lbCard');
+  lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Đang tải...</div>';
+
+  const scores = await fetchLeaderboard();
+  if(scores.length === 0){
+    lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Chưa có dữ liệu</div>';
+    return;
+  }
+
+  const medals = ['🥇','🥈','🥉'];
+  lbCard.innerHTML = scores.slice(0, 10).map((s, i) => {
+    const isMe = s.email.toLowerCase() === currentPlayer.toLowerCase();
+    const rank = medals[i] || `${i+1}`;
+    const name = s.email.split('@')[0];
+    return `<div class="lb-row${isMe?' you':''}">
+      <div class="lb-rank">${rank}</div>
+      <div class="lb-name">${name}${isMe?' (bạn)':''}</div>
+      <div class="lb-score">${s.total}</div>
+    </div>`;
+  }).join('');
 }
 
 function showResult(){
