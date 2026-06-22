@@ -610,6 +610,33 @@ async function saveScoreToSheet(email, scoreObj) {
   }
 }
 
+// Session = ngày hôm nay (YYYY-MM-DD) — mọi người cùng ngày là cùng phiên
+const SESSION_ID = new Date().toISOString().slice(0, 10);
+
+async function postAnswer(questionIdx, answerIdx) {
+  if (!APPS_SCRIPT_URL) return;
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'saveAnswer', session: SESSION_ID, questionIdx, email: currentPlayer, answerIdx })
+    });
+  } catch (err) {
+    console.warn('Không lưu được câu trả lời:', err);
+  }
+}
+
+async function fetchQuestionStats(questionIdx) {
+  if (!APPS_SCRIPT_URL) return null;
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=getQuestionStats&session=${SESSION_ID}&q=${questionIdx}`);
+    const json = await res.json();
+    return json.votes || null;
+  } catch (err) {
+    console.warn('Không lấy được stats:', err);
+    return null;
+  }
+}
+
 async function fetchLeaderboard() {
   if (!APPS_SCRIPT_URL) return [];
   try {
@@ -879,7 +906,7 @@ function updateTimerUI(){
   ring.style.stroke=time>10?'#16A34A':time>5?'#EAB308':'#EF4444';
 }
 
-function answer(chosen){
+async function answer(chosen){
   clearInterval(timerInterval);
   for(let i=0;i<4;i++){
     const btn=document.getElementById('a'+i);
@@ -887,16 +914,33 @@ function answer(chosen){
     btn.style.opacity=chosen===i?'1':'0.35';
   }
   if(chosen>=0) score[questions[current].t[chosen]]+=100+time*10;
-  showStats(chosen);
+  if(chosen>=0) postAnswer(current, chosen);
+  await showStats(chosen);
 }
 
-function showStats(chosen){
+async function showStats(chosen){
   const q=questions[current];
-  const total=Math.floor(Math.random()*20)+15;
-  const votes=[0,0,0,0];
-  if(chosen>=0) votes[chosen]++;
-  for(let n=1;n<total;n++) votes[Math.floor(Math.random()*4)]++;
 
+  document.getElementById('your-pick').innerHTML=
+    chosen>=0?`Bạn chọn: <strong>${q.a[chosen]}</strong>`:'⏰ Hết giờ — bạn không kịp chọn';
+  const isLast=(current+1>=questions.length);
+  document.getElementById('btn-next').textContent=isLast?'Xem kết quả 🏆':'Câu tiếp theo ▶';
+  document.getElementById('stat-bars').innerHTML='<div style="text-align:center;color:#6B7F79;padding:16px;font-size:14px">Đang tải kết quả lớp...</div>';
+  document.getElementById('stats-overlay').classList.add('show');
+
+  // Đợi một chút để đảm bảo answer của mình đã ghi xong
+  await new Promise(r => setTimeout(r, 1200));
+  const realVotes = await fetchQuestionStats(current);
+
+  let votes = realVotes || [0,0,0,0];
+  // Nếu không lấy được data thật, dùng random fallback
+  if(!realVotes){
+    if(chosen>=0) votes[chosen]++;
+    const total=Math.floor(Math.random()*18)+8;
+    for(let n=1;n<total;n++) votes[Math.floor(Math.random()*4)]++;
+  }
+
+  const total=votes.reduce((a,b)=>a+b,0)||1;
   let html='';
   for(let i=0;i<4;i++){
     const pct=Math.round(votes[i]/total*100);
@@ -907,11 +951,6 @@ function showStats(chosen){
     </div>`;
   }
   document.getElementById('stat-bars').innerHTML=html;
-  document.getElementById('your-pick').innerHTML=
-    chosen>=0?`Bạn chọn: <strong>${q.a[chosen]}</strong>`:'⏰ Hết giờ — bạn không kịp chọn';
-  const isLast=(current+1>=questions.length);
-  document.getElementById('btn-next').textContent=isLast?'Xem kết quả 🏆':'Câu tiếp theo ▶';
-  document.getElementById('stats-overlay').classList.add('show');
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     document.querySelectorAll('.stat-fill').forEach(el=>{el.style.width=el.dataset.pct+'%';});
   }));

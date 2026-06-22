@@ -69,6 +69,8 @@ function doPost(e) {
       importAccounts(data.emails);
     } else if (data.action === "saveScore") {
       saveScore(data.email, data.score);
+    } else if (data.action === "saveAnswer") {
+      saveAnswer(data.session, data.questionIdx, data.email, data.answerIdx);
     }
 
     return ContentService
@@ -79,6 +81,34 @@ function doPost(e) {
       .createTextOutput(JSON.stringify({ success: false, error: err.message }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+// ── Lưu câu trả lời của học viên ──
+function saveAnswer(session, questionIdx, email, answerIdx) {
+  const sheet = getOrCreateSheet(
+    "Answers",
+    ["Session", "Question", "Email", "Answer", "Timestamp"],
+    "#6366f1"
+  );
+  const timestamp = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+  sheet.appendRow([session, questionIdx, email, answerIdx, timestamp]);
+}
+
+// ── Lấy thống kê câu trả lời theo session + câu hỏi ──
+function getQuestionStats(session, questionIdx) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Answers");
+  const votes = [0, 0, 0, 0];
+  if (!sheet || sheet.getLastRow() < 2) return votes;
+
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues();
+  rows.forEach(r => {
+    if (String(r[0]) === String(session) && Number(r[1]) === Number(questionIdx)) {
+      const idx = Number(r[3]);
+      if (idx >= 0 && idx <= 3) votes[idx]++;
+    }
+  });
+  return votes;
 }
 
 // ── Lấy danh sách điểm từ sheet Score ──
@@ -106,6 +136,14 @@ function doGet(e) {
   if (e.parameter.action === "getScores") {
     return ContentService
       .createTextOutput(JSON.stringify({ success: true, scores: getScores() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  if (e.parameter.action === "getQuestionStats") {
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        success: true,
+        votes: getQuestionStats(e.parameter.session, e.parameter.q)
+      }))
       .setMimeType(ContentService.MimeType.JSON);
   }
   return ContentService
