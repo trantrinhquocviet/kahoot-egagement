@@ -60,6 +60,70 @@ function saveScore(email, scoreData) {
   sheet.appendRow([timestamp, email, scoreData.data, scoreData.biz, scoreData.eng, scoreData.creative, total, career]);
 }
 
+// ── Lobby: check-in & game state ──
+function checkInLobby(session, email) {
+  const sheet = getOrCreateSheet(
+    "Lobby",
+    ["Session", "Email", "Checked In At"],
+    "#f59e0b"
+  );
+  // Xoá check-in cũ của email này trong session
+  const data = sheet.getDataRange().getValues();
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (String(data[i][0]) === String(session) && String(data[i][1]).toLowerCase() === email.toLowerCase()) {
+      sheet.deleteRow(i + 1);
+    }
+  }
+  const timestamp = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+  sheet.appendRow([session, email, timestamp]);
+}
+
+function getLobbyState(session) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Lấy game state từ Config sheet
+  let configSheet = ss.getSheetByName("Config");
+  if (!configSheet) {
+    configSheet = ss.insertSheet("Config");
+    configSheet.appendRow(["Key", "Value"]);
+    configSheet.appendRow(["game_state", "waiting"]);
+    configSheet.appendRow(["game_session", ""]);
+  }
+  const configData = configSheet.getDataRange().getValues();
+  let state = "waiting";
+  let gameSession = "";
+  for (let i = 1; i < configData.length; i++) {
+    if (configData[i][0] === "game_state") state = configData[i][1];
+    if (configData[i][0] === "game_session") gameSession = configData[i][1];
+  }
+
+  // Lấy danh sách players trong lobby của session này
+  const lobbySheet = ss.getSheetByName("Lobby");
+  let players = [];
+  if (lobbySheet && lobbySheet.getLastRow() > 1) {
+    const rows = lobbySheet.getRange(2, 1, lobbySheet.getLastRow() - 1, 2).getValues();
+    players = rows.filter(r => String(r[0]) === String(session)).map(r => String(r[1]));
+  }
+
+  return { state, gameSession, players };
+}
+
+function setGameState(state, session) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let configSheet = ss.getSheetByName("Config");
+  if (!configSheet) {
+    configSheet = ss.insertSheet("Config");
+    configSheet.appendRow(["Key", "Value"]);
+    configSheet.appendRow(["game_state", "waiting"]);
+    configSheet.appendRow(["game_session", ""]);
+  }
+  const data = configSheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === "game_state") configSheet.getRange(i + 1, 2).setValue(state);
+    if (data[i][0] === "game_session") configSheet.getRange(i + 1, 2).setValue(session || "");
+  }
+}
+
 // ── Web App endpoint ──
 function doPost(e) {
   try {
@@ -71,6 +135,10 @@ function doPost(e) {
       saveScore(data.email, data.score);
     } else if (data.action === "saveAnswer") {
       saveAnswer(data.session, data.questionIdx, data.email, data.answerIdx);
+    } else if (data.action === "checkIn") {
+      checkInLobby(data.session, data.email);
+    } else if (data.action === "setGameState") {
+      setGameState(data.state, data.session);
     }
 
     return ContentService
@@ -133,6 +201,11 @@ function getScores() {
 }
 
 function doGet(e) {
+  if (e.parameter.action === "getLobbyState") {
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true, ...getLobbyState(e.parameter.session) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   if (e.parameter.action === "getScores") {
     return ContentService
       .createTextOutput(JSON.stringify({ success: true, scores: getScores() }))

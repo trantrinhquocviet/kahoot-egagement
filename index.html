@@ -439,6 +439,52 @@
     border-color:#EF4444;
   }
 
+  /* ── LOBBY SCREEN ── */
+  .lobby-card{
+    background:var(--dua-card);border:1px solid var(--dua-border);
+    border-radius:24px;padding:40px 36px;width:100%;max-width:520px;
+    text-align:center;box-shadow:var(--dua-shadow);
+  }
+  .lobby-title{font-size:28px;font-weight:900;color:var(--dua-navy);margin-bottom:6px}
+  .lobby-sub{font-size:15px;color:var(--dua-muted);margin-bottom:28px}
+  .lobby-pulse{
+    width:72px;height:72px;border-radius:50%;
+    background:linear-gradient(135deg,var(--dua-green-2),var(--dua-teal));
+    margin:0 auto 24px;display:flex;align-items:center;justify-content:center;
+    font-size:32px;animation:pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.12);opacity:.8}}
+  .lobby-count{font-size:42px;font-weight:900;color:var(--dua-green);margin-bottom:4px}
+  .lobby-count-label{font-size:14px;color:var(--dua-muted);margin-bottom:24px}
+  .lobby-players{
+    background:rgba(236,253,243,.78);border-radius:12px;
+    padding:12px 16px;max-height:200px;overflow-y:auto;
+    text-align:left;margin-bottom:20px;
+  }
+  .lobby-player-row{
+    padding:6px 0;border-bottom:1px solid rgba(18,58,52,.08);
+    font-size:14px;color:var(--dua-navy);display:flex;align-items:center;gap:8px;
+  }
+  .lobby-player-row:last-child{border:none}
+  .lobby-waiting{font-size:13px;color:var(--dua-muted);font-style:italic;text-align:center;padding:8px}
+
+  /* Admin lobby panel */
+  .admin-lobby{
+    background:rgba(236,253,243,.78);border-radius:12px;
+    padding:16px;margin-top:16px;display:none;
+  }
+  .admin-lobby-title{font-size:14px;font-weight:700;color:var(--dua-green);margin-bottom:8px}
+  .admin-lobby-list{font-size:13px;color:var(--dua-navy);max-height:150px;overflow-y:auto;margin-bottom:12px}
+  .admin-lobby-row{padding:4px 0;border-bottom:1px solid rgba(18,58,52,.08)}
+  .admin-lobby-row:last-child{border:none}
+  .btn-start-game{
+    width:100%;padding:14px;font-size:17px;font-weight:900;
+    background:linear-gradient(135deg,var(--dua-green-2),var(--dua-teal));
+    border:none;border-radius:12px;color:#fff;cursor:pointer;
+    box-shadow:0 12px 28px rgba(22,163,74,.24);transition:transform .12s;
+  }
+  .btn-start-game:hover{transform:scale(1.02)}
+
 </style>
 </head>
 <body>
@@ -487,6 +533,11 @@
       ✅ Lưu danh sách &amp; kích hoạt
     </button>
     <div class="admin-reset" onclick="resetAll()">Xoá danh sách cũ &amp; bắt đầu lại</div>
+    <div class="admin-lobby" id="adminLobby">
+      <div class="admin-lobby-title">👥 Học viên đang chờ (<span id="adminLobbyCount">0</span>)</div>
+      <div class="admin-lobby-list" id="adminLobbyList"></div>
+      <button class="btn-start-game" onclick="adminStartGame()">🚀 Bắt đầu ngay!</button>
+    </div>
     </div><!-- /adminBody -->
   </div>
 </div>
@@ -501,6 +552,21 @@
            onkeydown="if(event.key==='Enter')doLogin()">
     <div class="login-error" id="loginError"></div>
     <button class="btn-login" onclick="doLogin()">Vào chơi 🚀</button>
+  </div>
+</div>
+
+<!-- ══ LOBBY ══ -->
+<div id="lobby" class="screen">
+  <div class="lobby-card">
+    <div class="lobby-pulse">⏳</div>
+    <div class="lobby-title">Đang chờ vào lớp...</div>
+    <div class="lobby-sub" id="lobbyEmail"></div>
+    <div class="lobby-count" id="lobbyCount">0</div>
+    <div class="lobby-count-label">học viên đã vào</div>
+    <div class="lobby-players" id="lobbyPlayers">
+      <div class="lobby-waiting">Chưa có ai vào...</div>
+    </div>
+    <div style="font-size:13px;color:var(--dua-muted)">Giảng viên sẽ bắt đầu khi đủ người 🎯</div>
   </div>
 </div>
 
@@ -685,6 +751,46 @@ let time=30;
 let timerInterval;
 let parsedEmails=[];   // staging before save
 const CIRCUMFERENCE=2*Math.PI*30;
+let lobbyPollInterval = null;
+
+async function enterLobby(email) {
+  document.getElementById('lobbyEmail').textContent = email;
+  show('lobby');
+  // Check-in vào sheet
+  if (APPS_SCRIPT_URL) {
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'checkIn', session: SESSION_ID, email })
+      });
+    } catch(e) {}
+  }
+  // Bắt đầu poll
+  pollLobby();
+  lobbyPollInterval = setInterval(pollLobby, 2500);
+}
+
+async function pollLobby() {
+  if (!APPS_SCRIPT_URL) return;
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=getLobbyState&session=${SESSION_ID}`);
+    const json = await res.json();
+
+    // Cập nhật UI lobby
+    const players = json.players || [];
+    document.getElementById('lobbyCount').textContent = players.length;
+    if (players.length > 0) {
+      document.getElementById('lobbyPlayers').innerHTML = players
+        .map(p => `<div class="lobby-player-row">✅ ${p}</div>`).join('');
+    }
+
+    // Nếu game đã start và session khớp → vào quiz
+    if (json.state === 'started' && json.gameSession === SESSION_ID) {
+      clearInterval(lobbyPollInterval);
+      show('start');
+    }
+  } catch(e) {}
+}
 
 // ── Boot ──
 (function init(){
@@ -828,6 +934,37 @@ function saveAndActivate(){
   const toSave=parsedEmails.length>0?parsedEmails:emailList;
   localStorage.setItem(LS_KEY,JSON.stringify(toSave));
   document.getElementById('btnSave').innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+  // Hiện panel lobby và bắt đầu poll
+  document.getElementById('adminLobby').style.display='block';
+  setInterval(pollAdminLobby, 3000);
+  pollAdminLobby();
+}
+
+async function pollAdminLobby() {
+  if (!APPS_SCRIPT_URL) return;
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=getLobbyState&session=${SESSION_ID}`);
+    const json = await res.json();
+    const players = json.players || [];
+    document.getElementById('adminLobbyCount').textContent = players.length;
+    document.getElementById('adminLobbyList').innerHTML = players.length > 0
+      ? players.map(p => `<div class="admin-lobby-row">👤 ${p}</div>`).join('')
+      : '<div style="color:#6B7F79;font-style:italic;font-size:13px">Chưa có học viên nào vào...</div>';
+  } catch(e) {}
+}
+
+async function adminStartGame() {
+  if (!APPS_SCRIPT_URL) return;
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'setGameState', state: 'started', session: SESSION_ID })
+    });
+    document.querySelector('.btn-start-game').textContent = '✅ Đã bắt đầu!';
+    document.querySelector('.btn-start-game').disabled = true;
+  } catch(e) {
+    alert('Lỗi khi bắt đầu game: ' + e.message);
+  }
 }
 
 function resetAll(){
@@ -870,7 +1007,7 @@ function doLogin(){
   document.getElementById('welcomeName').textContent=val;
   document.getElementById('qPlayer').textContent=val;
   err.textContent='';
-  show('start');
+  enterLobby(val);
 }
 
 // ══ QUIZ LOGIC ══
