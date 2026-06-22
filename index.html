@@ -795,12 +795,11 @@ async function pollLobby() {
 // ── Boot ──
 (function init(){
   const isAdmin=location.search.includes('admin');
-  const stored=localStorage.getItem(LS_KEY);
   if(isAdmin){
     show('admin');
-    // If PIN was already verified this session, skip gate
     if(sessionStorage.getItem('admin_ok')){
       unlockAdmin();
+      const stored=localStorage.getItem(LS_KEY);
       if(stored){
         emailList=JSON.parse(stored);
         renderPreview(emailList);
@@ -810,19 +809,40 @@ async function pollLobby() {
       }
     }
   } else {
-    if(stored){
-      emailList=JSON.parse(stored);
-    }
-    // Always show login — students just enter email
+    // Học viên: fetch danh sách email từ sheet (không dùng localStorage)
     show('login');
-    if(!stored){
-      document.getElementById('loginError').textContent='⚠️ Giảng viên chưa kích hoạt buổi học.';
-      document.getElementById('emailInput').disabled=true;
-      document.querySelector('.btn-login').disabled=true;
-      document.querySelector('.btn-login').style.opacity='0.4';
-    }
+    document.getElementById('loginError').textContent='⏳ Đang tải danh sách...';
+    document.getElementById('emailInput').disabled=true;
+    document.querySelector('.btn-login').disabled=true;
+    document.querySelector('.btn-login').style.opacity='0.4';
+    fetchAccountList();
   }
 })();
+
+async function fetchAccountList(){
+  const errEl=document.getElementById('loginError');
+  const inp=document.getElementById('emailInput');
+  const btn=document.querySelector('.btn-login');
+  if(!APPS_SCRIPT_URL){
+    errEl.textContent='⚠️ Giảng viên chưa kích hoạt buổi học.';
+    return;
+  }
+  try{
+    const res=await fetch(`${APPS_SCRIPT_URL}?action=getAccounts`);
+    const json=await res.json();
+    if(json.emails && json.emails.length>0){
+      emailList=json.emails;
+      errEl.textContent='';
+      inp.disabled=false;
+      btn.disabled=false;
+      btn.style.opacity='1';
+    } else {
+      errEl.textContent='⚠️ Giảng viên chưa kích hoạt buổi học.';
+    }
+  } catch(e){
+    errEl.textContent='⚠️ Không kết nối được — thử tải lại trang.';
+  }
+}
 
 // ── Admin PIN ──
 function checkPin(){

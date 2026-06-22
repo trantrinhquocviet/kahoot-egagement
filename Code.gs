@@ -201,6 +201,19 @@ function getScores() {
 }
 
 function doGet(e) {
+  if (e.parameter.action === "getAccounts") {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName("Account");
+    let emails = [];
+    if (sheet && sheet.getLastRow() > 1) {
+      emails = sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getValues()
+        .map(r => String(r[0]).trim().toLowerCase())
+        .filter(e => e.includes("@"));
+    }
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true, emails }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   if (e.parameter.action === "getLobbyState") {
     return ContentService
       .createTextOutput(JSON.stringify({ success: true, ...getLobbyState(e.parameter.session) }))
