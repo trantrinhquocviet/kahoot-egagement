@@ -765,9 +765,12 @@ async function enterLobby(email) {
       });
     } catch(e) {}
   }
-  // Bắt đầu poll
-  pollLobby();
-  lobbyPollInterval = setInterval(pollLobby, 2500);
+  // Bắt đầu poll — jitter để tránh spike đồng thời khi nhiều học sinh cùng vào
+  const jitter = Math.random() * 2000;
+  setTimeout(() => {
+    pollLobby();
+    lobbyPollInterval = setInterval(pollLobby, 5000);
+  }, jitter);
 }
 
 async function pollLobby() {
@@ -959,7 +962,7 @@ function saveAndActivate(){
   document.getElementById('btnSave').innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
   // Hiện panel lobby và bắt đầu poll
   document.getElementById('adminLobby').style.display='block';
-  setInterval(pollAdminLobby, 3000);
+  setInterval(pollAdminLobby, 5000);
   pollAdminLobby();
 }
 
