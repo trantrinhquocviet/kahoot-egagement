@@ -805,7 +805,10 @@ async function pollLobby() {
         renderPreview(emailList);
         showShareBox();
         document.getElementById('btnSave').classList.add('ready');
-        document.getElementById('btnSave').innerHTML='✅ Danh sách đã lưu — kích hoạt lại';
+        document.getElementById('btnSave').innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+        document.getElementById('adminLobby').style.display='block';
+        setInterval(pollAdminLobby, 3000);
+        pollAdminLobby();
       }
     }
   } else {
