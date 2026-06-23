@@ -810,8 +810,9 @@ async function pollLobby() {
         document.getElementById('btnSave').classList.add('ready');
         document.getElementById('btnSave').innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
         document.getElementById('adminLobby').style.display='block';
-        setInterval(pollAdminLobby, 3000);
+        setInterval(pollAdminLobby, 5000);
         pollAdminLobby();
+        logImportToSheet(emailList);
       }
     }
   } else {
