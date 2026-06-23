@@ -843,10 +843,12 @@ async function fetchAccountList(){
       btn.disabled=false;
       btn.style.opacity='1';
     } else {
-      errEl.textContent='⚠️ Giảng viên chưa kích hoạt buổi học.';
+      errEl.textContent='⏳ Đang chờ giảng viên kích hoạt...';
+      setTimeout(fetchAccountList, 5000);
     }
   } catch(e){
-    errEl.textContent='⚠️ Không kết nối được — thử tải lại trang.';
+    errEl.textContent='⚠️ Không kết nối được — thử lại...';
+    setTimeout(fetchAccountList, 5000);
   }
 }
 
