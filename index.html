@@ -79,6 +79,7 @@
   .btn-admin-save.ready{opacity:1;pointer-events:auto}
   .btn-admin-save.ready:hover{transform:scale(1.02)}
 
+  .session-status{background:#dcfce7;color:#15803d;border:1.5px solid #86efac;border-radius:10px;padding:10px 16px;text-align:center;font-size:14px;font-weight:600;margin-top:12px}
   .admin-reset{font-size:12px;color:#666;text-align:center;margin-top:12px;cursor:pointer;text-decoration:underline}
   .admin-reset:hover{color:#aaa}
 
@@ -532,6 +533,9 @@
     <button class="btn-admin-save" id="btnSave" onclick="saveAndActivate()">
       ✅ Lưu danh sách &amp; kích hoạt
     </button>
+    <div class="session-status" id="sessionStatus" style="display:none">
+      🟢 Buổi học đang hoạt động — học viên có thể đăng nhập
+    </div>
     <div class="admin-reset" onclick="resetAll()">Xoá danh sách cũ &amp; bắt đầu lại</div>
     <div class="admin-lobby" id="adminLobby">
       <div class="admin-lobby-title">👥 Học viên đang chờ (<span id="adminLobbyCount">0</span>)</div>
@@ -976,6 +980,7 @@ async function saveAndActivate(){
   const ok=await logImportToSheet(toSave);
   if(ok){
     btn.innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+    document.getElementById('sessionStatus').style.display='block';
   } else {
     btn.innerHTML='⚠️ Lưu thất bại — thử lại';
     btn.disabled=false;
