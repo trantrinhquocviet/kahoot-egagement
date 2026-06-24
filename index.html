@@ -671,6 +671,21 @@ async function logImportToSheet(emails) {
   }
 }
 
+async function setSessionActiveFlag(active) {
+  if (!APPS_SCRIPT_URL) return false;
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'setSessionActive', active })
+    });
+    const json = await res.json();
+    return json.success !== false;
+  } catch (err) {
+    console.warn('Không ghi được Active flag:', err);
+    return false;
+  }
+}
+
 async function saveScoreToSheet(email, scoreObj) {
   if (!APPS_SCRIPT_URL) return;
   try {
@@ -843,6 +858,14 @@ async function fetchAccountList(){
     return;
   }
   try{
+    // Kiểm tra cờ kích hoạt trước
+    const flagRes=await fetch(`${APPS_SCRIPT_URL}?action=getSessionActive&t=${Date.now()}`);
+    const flagJson=await flagRes.json();
+    if(!flagJson.active){
+      errEl.textContent='⚠️ Giảng viên chưa kích hoạt buổi học.';
+      setTimeout(fetchAccountList, 5000);
+      return;
+    }
     const res=await fetch(`${APPS_SCRIPT_URL}?action=getAccounts&t=${Date.now()}`);
     const json=await res.json();
     if(json.emails && json.emails.length>0){
@@ -852,7 +875,7 @@ async function fetchAccountList(){
       btn.disabled=false;
       btn.style.opacity='1';
     } else {
-      errEl.textContent='⏳ Đang chờ giảng viên kích hoạt...';
+      errEl.textContent='⏳ Đang tải danh sách...';
       setTimeout(fetchAccountList, 5000);
     }
   } catch(e){
@@ -978,15 +1001,15 @@ async function saveAndActivate(){
   btn.innerHTML='⏳ Đang đồng bộ lên Sheet...';
   localStorage.setItem(LS_KEY,JSON.stringify(toSave));
   const ok=await logImportToSheet(toSave);
-  if(ok){
-    btn.innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
-    document.getElementById('sessionStatus').style.display='block';
-  } else {
+  if(!ok){
     btn.innerHTML='⚠️ Lưu thất bại — thử lại';
     btn.disabled=false;
     alert('Không đồng bộ được danh sách lên Google Sheet. Kiểm tra kết nối và thử lại.');
     return;
   }
+  await setSessionActiveFlag(true);
+  btn.innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+  document.getElementById('sessionStatus').style.display='block';
   // Hiện panel lobby và bắt đầu poll
   document.getElementById('adminLobby').style.display='block';
   setInterval(pollAdminLobby, 5000);

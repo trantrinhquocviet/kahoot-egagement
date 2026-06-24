@@ -124,6 +124,21 @@ function setGameState(state, session) {
   }
 }
 
+// ── Cờ kích hoạt buổi học ──
+function setSessionActive(active) {
+  const sheet = getOrCreateSheet("Active", ["Active", "Updated At"], "#7C3AED");
+  if (sheet.getLastRow() > 1) sheet.deleteRows(2, sheet.getLastRow() - 1);
+  const timestamp = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+  sheet.appendRow([active ? "true" : "false", timestamp]);
+}
+
+function getSessionActive() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Active");
+  if (!sheet || sheet.getLastRow() < 2) return false;
+  return String(sheet.getRange(2, 1).getValue()).trim().toLowerCase() === "true";
+}
+
 // ── Web App endpoint ──
 function doPost(e) {
   try {
@@ -139,6 +154,8 @@ function doPost(e) {
       checkInLobby(data.session, data.email);
     } else if (data.action === "setGameState") {
       setGameState(data.state, data.session);
+    } else if (data.action === "setSessionActive") {
+      setSessionActive(data.active);
     }
 
     return ContentService
@@ -201,6 +218,11 @@ function getScores() {
 }
 
 function doGet(e) {
+  if (e.parameter.action === "getSessionActive") {
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true, active: getSessionActive() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   if (e.parameter.action === "getAccounts") {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName("Account");
