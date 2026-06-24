@@ -699,7 +699,7 @@ async function saveScoreToSheet(email, scoreObj) {
 }
 
 // Session = ngày hôm nay (YYYY-MM-DD) — mọi người cùng ngày là cùng phiên
-const SESSION_ID = new Date().toISOString().slice(0, 10);
+const SESSION_ID = 's-' + new Date().toISOString().slice(0, 10);
 
 async function postAnswer(questionIdx, answerIdx) {
   if (!APPS_SCRIPT_URL) return;
