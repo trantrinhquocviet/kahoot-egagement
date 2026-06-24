@@ -114,14 +114,15 @@ function setGameState(state, session) {
   if (!configSheet) {
     configSheet = ss.insertSheet("Config");
     configSheet.appendRow(["Key", "Value"]);
-    configSheet.appendRow(["game_state", "waiting"]);
-    configSheet.appendRow(["game_session", ""]);
   }
   const data = configSheet.getDataRange().getValues();
+  let foundState = false, foundSession = false;
   for (let i = 1; i < data.length; i++) {
-    if (data[i][0] === "game_state") configSheet.getRange(i + 1, 2).setValue(state);
-    if (data[i][0] === "game_session") configSheet.getRange(i + 1, 2).setValue(session || "");
+    if (data[i][0] === "game_state") { configSheet.getRange(i + 1, 2).setValue(state); foundState = true; }
+    if (data[i][0] === "game_session") { configSheet.getRange(i + 1, 2).setValue(session || ""); foundSession = true; }
   }
+  if (!foundState) configSheet.appendRow(["game_state", state]);
+  if (!foundSession) configSheet.appendRow(["game_session", session || ""]);
 }
 
 // ── Cờ kích hoạt buổi học ──
