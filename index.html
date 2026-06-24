@@ -653,14 +653,17 @@ const ADMIN_PIN='onpoint2024'; // đổi PIN tại đây
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0Ep4qw-Z_FSq0uU8Ns8QeGpqVxC_ZmJiV4ouZ5f57l6Aar33mVUxIRvW5jMge7Rn8/exec';
 
 async function logImportToSheet(emails) {
-  if (!APPS_SCRIPT_URL) return;
+  if (!APPS_SCRIPT_URL) return false;
   try {
-    await fetch(APPS_SCRIPT_URL, {
+    const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       body: JSON.stringify({ action: 'importAccounts', emails })
     });
+    const json = await res.json();
+    return json.success !== false;
   } catch (err) {
     console.warn('Không ghi được Account:', err);
+    return false;
   }
 }
 
@@ -807,8 +810,9 @@ async function pollLobby() {
         emailList=JSON.parse(stored);
         renderPreview(emailList);
         showShareBox();
-        document.getElementById('btnSave').classList.add('ready');
-        document.getElementById('btnSave').innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+        const btn=document.getElementById('btnSave');
+        btn.classList.add('ready');
+        btn.innerHTML=`🔄 Dùng lại ${emailList.length} email đã lưu &amp; kích hoạt`;
         document.getElementById('adminLobby').style.display='block';
         setInterval(pollAdminLobby, 5000);
         pollAdminLobby();
@@ -959,10 +963,25 @@ function copyLink(){
   });
 }
 
-function saveAndActivate(){
+async function saveAndActivate(){
   const toSave=parsedEmails.length>0?parsedEmails:emailList;
+  if(toSave.length===0){
+    alert('Chưa có danh sách email. Vui lòng tải file lên trước.');
+    return;
+  }
+  const btn=document.getElementById('btnSave');
+  btn.disabled=true;
+  btn.innerHTML='⏳ Đang đồng bộ lên Sheet...';
   localStorage.setItem(LS_KEY,JSON.stringify(toSave));
-  document.getElementById('btnSave').innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+  const ok=await logImportToSheet(toSave);
+  if(ok){
+    btn.innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+  } else {
+    btn.innerHTML='⚠️ Lưu thất bại — thử lại';
+    btn.disabled=false;
+    alert('Không đồng bộ được danh sách lên Google Sheet. Kiểm tra kết nối và thử lại.');
+    return;
+  }
   // Hiện panel lobby và bắt đầu poll
   document.getElementById('adminLobby').style.display='block';
   setInterval(pollAdminLobby, 5000);
