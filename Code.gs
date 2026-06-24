@@ -102,7 +102,7 @@ function getLobbyState(session) {
   let players = [];
   if (lobbySheet && lobbySheet.getLastRow() > 1) {
     const rows = lobbySheet.getRange(2, 1, lobbySheet.getLastRow() - 1, 2).getValues();
-    players = rows.filter(r => String(r[0]) === String(session)).map(r => String(r[1]));
+    players = [...new Set(rows.filter(r => String(r[0]) === String(session)).map(r => String(r[1])).filter(Boolean))];
   }
 
   return { state, gameSession, players };
