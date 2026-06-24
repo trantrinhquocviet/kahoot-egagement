@@ -781,11 +781,15 @@ async function enterLobby(email) {
   // Check-in vào sheet
   if (APPS_SCRIPT_URL) {
     try {
-      await fetch(APPS_SCRIPT_URL, {
+      const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'checkIn', session: SESSION_ID, email })
       });
-    } catch(e) {}
+      console.log('[checkIn] status:', res.status, 'session:', SESSION_ID);
+    } catch(e) {
+      console.error('[checkIn] lỗi:', e);
+    }
   }
   // Bắt đầu poll — jitter để tránh spike đồng thời khi nhiều học sinh cùng vào
   const jitter = Math.random() * 2000;
@@ -800,6 +804,7 @@ async function pollLobby() {
   try {
     const res = await fetch(`${APPS_SCRIPT_URL}?action=getLobbyState&session=${SESSION_ID}&t=${Date.now()}`);
     const json = await res.json();
+    console.log('[pollLobby]', json);
 
     // Cập nhật UI lobby
     const players = json.players || [];
@@ -814,7 +819,9 @@ async function pollLobby() {
       clearInterval(lobbyPollInterval);
       show('start');
     }
-  } catch(e) {}
+  } catch(e) {
+    console.error('[pollLobby] lỗi:', e);
+  }
 }
 
 // ── Boot ──
