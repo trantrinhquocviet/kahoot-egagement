@@ -815,7 +815,7 @@ async function pollLobby() {
     // Nếu game đã start và session khớp → vào quiz
     if (json.state === 'started') {
       clearInterval(lobbyPollInterval);
-      show('start');
+      startGame();
     }
   } catch(e) {
     console.error('[pollLobby] lỗi:', e);
