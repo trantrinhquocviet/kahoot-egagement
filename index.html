@@ -781,12 +781,10 @@ async function enterLobby(email) {
   // Check-in vào sheet
   if (APPS_SCRIPT_URL) {
     try {
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'checkIn', session: SESSION_ID, email })
-      });
-      console.log('[checkIn] status:', res.status, 'session:', SESSION_ID);
+      const url = `${APPS_SCRIPT_URL}?action=checkIn&session=${encodeURIComponent(SESSION_ID)}&email=${encodeURIComponent(email)}&t=${Date.now()}`;
+      const res = await fetch(url);
+      const json = await res.json();
+      console.log('[checkIn]', json, 'session:', SESSION_ID);
     } catch(e) {
       console.error('[checkIn] lỗi:', e);
     }

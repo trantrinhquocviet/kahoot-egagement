@@ -236,6 +236,12 @@ function doGet(e) {
       .createTextOutput(JSON.stringify({ success: true, emails }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+  if (e.parameter.action === "checkIn") {
+    checkInLobby(e.parameter.session, e.parameter.email);
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   if (e.parameter.action === "getLobbyState") {
     return ContentService
       .createTextOutput(JSON.stringify({ success: true, ...getLobbyState(e.parameter.session) }))
