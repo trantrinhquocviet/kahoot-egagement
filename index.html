@@ -813,7 +813,7 @@ async function pollLobby() {
     }
 
     // Nếu game đã start và session khớp → vào quiz
-    if (json.state === 'started' && json.gameSession === SESSION_ID) {
+    if (json.state === 'started') {
       clearInterval(lobbyPollInterval);
       show('start');
     }
@@ -1013,6 +1013,8 @@ async function saveAndActivate(){
     return;
   }
   await setSessionActiveFlag(true);
+  // Reset game state về waiting cho session mới
+  await fetch(`${APPS_SCRIPT_URL}?action=setGameState&state=waiting&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
   btn.innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
   document.getElementById('sessionStatus').style.display='block';
   // Hiện panel lobby và bắt đầu poll
