@@ -1037,10 +1037,7 @@ async function pollAdminLobby() {
 async function adminStartGame() {
   if (!APPS_SCRIPT_URL) return;
   try {
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'setGameState', state: 'started', session: SESSION_ID })
-    });
+    await fetch(`${APPS_SCRIPT_URL}?action=setGameState&state=started&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
     document.querySelector('.btn-start-game').textContent = '✅ Đã bắt đầu!';
     document.querySelector('.btn-start-game').disabled = true;
   } catch(e) {

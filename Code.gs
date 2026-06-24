@@ -242,6 +242,12 @@ function doGet(e) {
       .createTextOutput(JSON.stringify({ success: true }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+  if (e.parameter.action === "setGameState") {
+    setGameState(e.parameter.state, e.parameter.session);
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   if (e.parameter.action === "getLobbyState") {
     return ContentService
       .createTextOutput(JSON.stringify({ success: true, ...getLobbyState(e.parameter.session) }))
