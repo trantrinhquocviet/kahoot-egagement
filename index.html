@@ -172,16 +172,18 @@
     padding:20px 24px;border:none;border-radius:14px;
     font-family:inherit;font-size:19px;font-weight:800;color:#fff;
     cursor:pointer;text-align:left;
+    -webkit-appearance:none;appearance:none;
     transition:transform .12s,filter .15s,opacity .3s;
     box-shadow:0 4px 16px rgba(0,0,0,.3);
   }
   .ans-btn:hover:not(:disabled){transform:translateY(-3px) scale(1.02);filter:brightness(1.12)}
   .ans-btn:disabled{cursor:default}
   .ans-btn .icon{width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2);border-radius:6px;font-size:15px;font-weight:900;letter-spacing:0}
-  .ans-btn.c0{background:linear-gradient(135deg,#e53935,#b71c1c)}
-  .ans-btn.c1{background:linear-gradient(135deg,#1e88e5,#0d47a1)}
-  .ans-btn.c2{background:linear-gradient(135deg,#fbc02d,#e65100)}
-  .ans-btn.c3{background:linear-gradient(135deg,#43a047,#1b5e20)}
+  .ans-btn .ans-text{flex:1;min-width:0}
+  .ans-btn.c0{background:linear-gradient(135deg,#F97316,#EA580C)!important}
+  .ans-btn.c1{background:linear-gradient(135deg,#14B8A6,#0F766E)!important}
+  .ans-btn.c2{background:linear-gradient(135deg,#EAB308,#CA8A04)!important}
+  .ans-btn.c3{background:linear-gradient(135deg,#22C55E,#15803D)!important}
 
   /* ── STATS OVERLAY ── */
   #stats-overlay{
@@ -422,10 +424,6 @@
     box-shadow:0 12px 26px rgba(18,58,52,.16);
     color:#fff;
   }
-  .ans-btn.c0{background:linear-gradient(135deg,#F97316,#EA580C)}
-  .ans-btn.c1{background:linear-gradient(135deg,#14B8A6,#0F766E)}
-  .ans-btn.c2{background:linear-gradient(135deg,#EAB308,#CA8A04)}
-  .ans-btn.c3{background:linear-gradient(135deg,#22C55E,#15803D)}
 
   #stats-overlay{
     background:rgba(15,46,42,.32);
@@ -654,10 +652,10 @@
   <div class="question-card" id="question"></div>
 
   <div class="answers">
-    <button class=”ans-btn c0” onclick=”answer(0)” id=”a0”><span class=”icon”>A</span><span id=”t0”></span></button>
-    <button class=”ans-btn c1” onclick=”answer(1)” id=”a1”><span class=”icon”>B</span><span id=”t1”></span></button>
-    <button class="ans-btn c2" onclick="answer(2)" id="a2"><span class="icon">C</span><span id="t2"></span></button>
-    <button class="ans-btn c3" onclick="answer(3)" id="a3"><span class="icon">D</span><span id="t3"></span></button>
+    <button class=”ans-btn c0” onclick=”answer(0)” id=”a0”><span class=”icon”>A</span><span class=”ans-text” id=”t0”></span></button>
+    <button class=”ans-btn c1” onclick=”answer(1)” id=”a1”><span class=”icon”>B</span><span class=”ans-text” id=”t1”></span></button>
+    <button class=”ans-btn c2” onclick=”answer(2)” id=”a2”><span class=”icon”>C</span><span class=”ans-text” id=”t2”></span></button>
+    <button class=”ans-btn c3” onclick=”answer(3)” id=”a3”><span class=”icon”>D</span><span class=”ans-text” id=”t3”></span></button>
   </div>
 </div>
 
