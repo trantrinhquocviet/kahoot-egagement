@@ -557,7 +557,7 @@
 
     <!-- Admin body (shown after PIN) -->
     <div class="admin-body" id="adminBody">
-    <div class="admin-sub">Đặt tên buổi học, sau Ä‘ó upload danh sách email học viên.</div>
+    <div class="admin-sub">Đặt tên buổi học, sau đó upload danh sách email học viên.</div>
 
     <div class="session-name-wrap">
       <label class="session-name-label" for="sessionNameInput">Tên buổi học</label>
@@ -570,7 +570,7 @@
       <input type="file" id="xlFile" accept=".xlsx,.xls,.csv" onchange="handleFile(this)">
       <div class="uz-icon"><i data-lucide="upload-cloud" style="width:40px;height:40px;stroke:#a855f7"></i></div>
       <div class="uz-text">Kéo thả hoặc <strong>nhấn để chọn file</strong></div>
-      <div class="uz-hint">Hỗ trợ .xlsx · .xls · .csv — cột email có thể Ä‘ặt tên tùy ý</div>
+      <div class="uz-hint">Hỗ trợ .xlsx · .xls · .csv — cột email có thể đặt tên tùy ý</div>
     </div>
 
     <div class="email-preview" id="emailPreview">
@@ -592,11 +592,11 @@
     <div class="session-status" id="sessionStatus" style="display:none">
       Buổi học đang hoạt động — học viên có thể đăng nhập
     </div>
-    <div class="admin-reset" onclick="resetAll()">Xoá danh sách cũ &amp; bắt Ä‘ầu lại</div>
+    <div class="admin-reset" onclick="resetAll()">Xoá danh sách cũ &amp; bắt đầu lại</div>
     <div class="admin-lobby" id="adminLobby">
       <div class="admin-lobby-title"><i data-lucide="users" style="width:14px;height:14px;vertical-align:middle;margin-right:5px"></i>Học viên đang chờ (<span id="adminLobbyCount">0</span>)</div>
       <div class="admin-lobby-list" id="adminLobbyList"></div>
-      <button class="btn-start-game" onclick="adminStartGame()">Bắt Ä‘ầu ngay</button>
+      <button class="btn-start-game" onclick="adminStartGame()">Bắt đầu ngay</button>
     </div>
     </div><!-- /adminBody -->
   </div>
@@ -627,11 +627,11 @@
     <div class="lobby-session-badge" id="lobbySessionBadge" style="display:none"></div>
     <div class="lobby-sub" id="lobbyEmail"></div>
     <div class="lobby-count" id="lobbyCount">0</div>
-    <div class="lobby-count-label">học viên Ä‘ã vào</div>
+    <div class="lobby-count-label">học viên đã vào</div>
     <div class="lobby-players" id="lobbyPlayers">
       <div class="lobby-waiting">Chưa có ai vào...</div>
     </div>
-    <div style="font-size:13px;color:var(--dua-muted)">Giảng viên sẽ bắt Ä‘ầu khi Ä‘ủ người</div>
+    <div style="font-size:13px;color:var(--dua-muted)">Giảng viên sẽ bắt đầu khi đủ người</div>
   </div>
 </div>
 
@@ -721,7 +721,7 @@
     <div class="career-title" id="careerTitle"></div>
     <div class="career-desc" id="careerDesc"></div>
     <div class="roadmap">
-      <strong>Roadmap Ä‘ề xuất:</strong><br>
+      <strong>Roadmap đề xuất:</strong><br>
       SQL → Power BI → Python → AI Agent → Automation
     </div>
     <button class="btn-replay" onclick="goReplay()">Chơi lại</button>
@@ -733,7 +733,7 @@
 const ICONS=['A','B','C','D'];
 const COLORS=['#F97316','#0EA5A4','#EAB308','#22C55E'];
 const LS_KEY='quiz_email_list';
-const ADMIN_PIN='onpoint2024'; // đổi PIN tại Ä‘ây
+const ADMIN_PIN='onpoint2024'; // đổi PIN tại đây
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0Ep4qw-Z_FSq0uU8Ns8QeGpqVxC_ZmJiV4ouZ5f57l6Aar33mVUxIRvW5jMge7Rn8/exec';
 
 async function logImportToSheet(emails) {
@@ -746,7 +746,7 @@ async function logImportToSheet(emails) {
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('Không ghi Ä‘ược Account:', err);
+    console.warn('Không ghi được Account:', err);
     return false;
   }
 }
@@ -761,7 +761,7 @@ async function setSessionActiveFlag(active) {
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('Không ghi Ä‘ược Active flag:', err);
+    console.warn('Không ghi được Active flag:', err);
     return false;
   }
 }
@@ -774,11 +774,11 @@ async function saveScoreToSheet(email, scoreObj) {
       body: JSON.stringify({ action: 'saveScore', email, score: scoreObj })
     });
   } catch (err) {
-    console.warn('Không ghi Ä‘ược Score:', err);
+    console.warn('Không ghi được Score:', err);
   }
 }
 
-// Session ID Ä‘ược set khi giảng viên tạo hoặc học viên chọn
+// Session ID được set khi giảng viên tạo hoặc học viên chọn
 let SESSION_ID = '';
 let SESSION_NAME = '';
 
@@ -792,7 +792,7 @@ async function createSessionOnSheet(sessionId, sessionName) {
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('Không tạo Ä‘ược session:', err);
+    console.warn('Không tạo được session:', err);
     return false;
   }
 }
@@ -833,7 +833,7 @@ async function postAnswer(questionIdx, answerIdx) {
       body: JSON.stringify({ action: 'saveAnswer', session: SESSION_ID, questionIdx, email: currentPlayer, answerIdx })
     });
   } catch (err) {
-    console.warn('Không lưu Ä‘ược câu trả lời:', err);
+    console.warn('Không lưu được câu trả lời:', err);
   }
 }
 
@@ -844,7 +844,7 @@ async function fetchQuestionStats(questionIdx) {
     const json = await res.json();
     return json.votes || null;
   } catch (err) {
-    console.warn('Không lấy Ä‘ược stats:', err);
+    console.warn('Không lấy được stats:', err);
     return null;
   }
 }
@@ -856,7 +856,7 @@ async function fetchLeaderboard() {
     const json = await res.json();
     return json.scores || [];
   } catch (err) {
-    console.warn('Không lấy Ä‘ược leaderboard:', err);
+    console.warn('Không lấy được leaderboard:', err);
     return [];
   }
 }
@@ -929,7 +929,7 @@ async function enterLobby(email) {
       console.error('[checkIn] lỗi:', e);
     }
   }
-  // Bắt Ä‘ầu poll — jitter để tránh spike đồng thời khi nhiều học sinh cùng vào
+  // Bắt đầu poll — jitter để tránh spike đồng thời khi nhiều học sinh cùng vào
   const jitter = Math.random() * 2000;
   setTimeout(() => {
     pollLobby();
@@ -952,7 +952,7 @@ async function pollLobby() {
         .map(p => `<div class="lobby-player-row">${p}</div>`).join('');
     }
 
-    // Nếu game Ä‘ã start và session khớp → vào quiz
+    // Nếu game đã start và session khớp → vào quiz
     if (json.state === 'started') {
       clearInterval(lobbyPollInterval);
       startGame();
@@ -969,7 +969,7 @@ async function pollLobby() {
     show('admin');
     if(sessionStorage.getItem('admin_ok')){
       unlockAdmin();
-      // Khôi phục session ID và tên session Ä‘ã lưu
+      // Khôi phục session ID và tên session đã lưu
       const storedSessionId = localStorage.getItem('admin_session_id');
       const storedSessionName = localStorage.getItem('admin_session_name');
       if (storedSessionId) {
@@ -984,7 +984,7 @@ async function pollLobby() {
         showShareBox();
         const btn=document.getElementById('btnSave');
         btn.classList.add('ready');
-        btn.innerHTML=`🔄 Dùng lại ${emailList.length} email Ä‘ã lưu &amp; kích hoạt`;
+        btn.innerHTML=`🔄 Dùng lại ${emailList.length} email đã lưu &amp; kích hoạt`;
         document.getElementById('adminLobby').style.display='block';
         if (SESSION_NAME) {
           document.getElementById('sessionStatus').textContent = `🟢 "${SESSION_NAME}" đang hoạt động — học viên có thể đăng nhập`;
@@ -1012,7 +1012,7 @@ async function fetchAccountList(){
   const inp=document.getElementById('emailInput');
   const btn=document.querySelector('.btn-login');
   if(!APPS_SCRIPT_URL){
-    errEl.textContent='âš ️ Giảng viên chưa kích hoạt buổi học.';
+    errEl.textContent='⚠️ Giảng viên chưa kích hoạt buổi học.';
     return;
   }
   try{
@@ -1028,7 +1028,7 @@ async function fetchAccountList(){
     const sessions = sessionsJson.sessions || [];
 
     if (sessions.length === 0) {
-      errEl.textContent='âš ️ Chưa có buổi học nào đang hoạt động.';
+      errEl.textContent='⚠️ Chưa có buổi học nào đang hoạt động.';
       setTimeout(fetchAccountList, 5000);
       return;
     }
@@ -1066,7 +1066,7 @@ async function fetchAccountList(){
       setTimeout(fetchAccountList, 5000);
     }
   } catch(e){
-    errEl.textContent='âš ️ Không kết nối Ä‘ược — thử lại...';
+    errEl.textContent='⚠️ Không kết nối được — thử lại...';
     setTimeout(fetchAccountList, 5000);
   }
 }
@@ -1078,7 +1078,7 @@ function checkPin(){
     sessionStorage.setItem('admin_ok','1');
     unlockAdmin();
   } else {
-    document.getElementById('pinError').textContent='PIN không Ä‘úng.';
+    document.getElementById('pinError').textContent='PIN không đúng.';
     document.getElementById('pinInput').classList.add('error');
     setTimeout(()=>document.getElementById('pinInput').classList.remove('error'),400);
   }
@@ -1113,12 +1113,12 @@ function handleFile(input){
       // Update label properly
       document.getElementById('btnSave').innerHTML=`✅ Lưu ${parsedEmails.length} học viên &amp; kích hoạt`;
     } catch(err){
-      alert('Lỗi Ä‘ọc file: '+err.message);
+      alert('Lỗi đọc file: '+err.message);
     }
   };
   reader.readAsArrayBuffer(file);
   // Reset upload zone label
-  document.querySelector('.uz-text').innerHTML=`<strong>${file.name}</strong> Ä‘ã tải xong`;
+  document.querySelector('.uz-text').innerHTML=`<strong>${file.name}</strong> đã tải xong`;
 }
 
 function extractEmails(rows){
@@ -1202,9 +1202,9 @@ async function saveAndActivate(){
 
   const ok=await logImportToSheet(toSave);
   if(!ok){
-    btn.innerHTML='âš ️ Lưu thất bại — thử lại';
+    btn.innerHTML='⚠️ Lưu thất bại — thử lại';
     btn.disabled=false;
-    alert('Không đồng bộ Ä‘ược danh sách lên Google Sheet. Kiểm tra kết nối và thử lại.');
+    alert('Không đồng bộ được danh sách lên Google Sheet. Kiểm tra kết nối và thử lại.');
     return;
   }
   // Tạo session trên sheet
@@ -1236,15 +1236,15 @@ async function adminStartGame() {
   if (!APPS_SCRIPT_URL) return;
   try {
     await fetch(`${APPS_SCRIPT_URL}?action=setGameState&state=started&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
-    document.querySelector('.btn-start-game').textContent = '✅ Đã bắt Ä‘ầu!';
+    document.querySelector('.btn-start-game').textContent = '✅ Đã bắt đầu!';
     document.querySelector('.btn-start-game').disabled = true;
   } catch(e) {
-    alert('Lỗi khi bắt Ä‘ầu game: ' + e.message);
+    alert('Lỗi khi bắt đầu game: ' + e.message);
   }
 }
 
 function resetAll(){
-  if(confirm('Xoá toàn bộ danh sách email Ä‘ã lưu?')){
+  if(confirm('Xoá toàn bộ danh sách email đã lưu?')){
     localStorage.removeItem(LS_KEY);
     location.reload();
   }
@@ -1272,7 +1272,7 @@ function doLogin(){
     return;
   }
   if(!isEmail(val)){
-    err.textContent='Vui lòng nhập Ä‘úng định dạng email.';
+    err.textContent='Vui lòng nhập đúng định dạng email.';
     inp.classList.add('error');
     setTimeout(()=>inp.classList.remove('error'),400);
     return;
@@ -1368,12 +1368,12 @@ async function showStats(chosen){
 
   document.getElementById('stats-overlay').classList.add('show');
 
-  // Đợi một chút để Ä‘ảm bảo answer của mình Ä‘ã ghi xong
+  // Đợi một chút để đảm bảo answer của mình đã ghi xong
   await new Promise(r => setTimeout(r, 1200));
   const realVotes = await fetchQuestionStats(current);
 
   let votes = realVotes || [0,0,0,0];
-  // Nếu không lấy Ä‘ược data thật, dùng random fallback
+  // Nếu không lấy được data thật, dùng random fallback
   if(!realVotes){
     if(chosen>=0) votes[chosen]++;
     const total=Math.floor(Math.random()*18)+8;
