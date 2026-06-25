@@ -203,6 +203,19 @@
   .stat-track{flex:1;background:rgba(255,255,255,.1);border-radius:8px;height:28px;overflow:hidden}
   .stat-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding:0 10px;font-size:12px;font-weight:800;width:0;transition:width .7s cubic-bezier(.4,0,.2,1)}
   .stat-cnt{width:32px;text-align:right;font-size:13px;color:#aaa}
+  .stats-tabs{display:flex;gap:0;margin-bottom:16px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.15)}
+  .stats-tab{flex:1;padding:9px 0;font-size:13px;font-weight:800;text-align:center;cursor:pointer;background:rgba(255,255,255,.07);color:#aaa;transition:background .15s,color .15s}
+  .stats-tab.active{background:rgba(168,85,247,.35);color:#fff}
+
+  .stats-panel{display:none}
+  .stats-panel.active{display:block}
+
+  .review-q{font-size:17px;font-weight:800;line-height:1.45;margin-bottom:14px;color:#fff}
+  .review-ans{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;margin-bottom:8px;font-size:14px;font-weight:700}
+  .review-ans.correct{background:rgba(34,197,94,.25);border:1.5px solid rgba(34,197,94,.5);color:#86efac}
+  .review-ans.chosen{background:rgba(249,115,22,.2);border:1.5px solid rgba(249,115,22,.4);color:#fdba74}
+  .review-ans.neutral{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);color:#ccc}
+
   .btn-next{
     margin-top:22px;width:100%;padding:14px;font-size:17px;font-weight:900;
     background:linear-gradient(135deg,#a855f7,#6366f1);border:none;border-radius:12px;
@@ -474,11 +487,11 @@
   .session-name-label{font-size:13px;color:#aaa;display:block;margin-bottom:6px;font-weight:700}
   .session-name-input{
     width:100%;padding:12px 14px;font-size:15px;font-family:inherit;font-weight:700;
-    background:rgba(255,255,255,.09);border:2px solid rgba(255,255,255,.15);
-    border-radius:10px;color:#fff;outline:none;transition:border-color .2s;
+    background:rgba(255,255,255,.92);border:2px solid rgba(255,255,255,.3);
+    border-radius:10px;color:#1a1a2e;outline:none;transition:border-color .2s;
   }
-  .session-name-input::placeholder{color:#666;font-weight:400}
-  .session-name-input:focus{border-color:#a855f7}
+  .session-name-input::placeholder{color:#888;font-weight:400}
+  .session-name-input:focus{border-color:#a855f7;background:#fff}
 
   /* Student session selector */
   .session-selector{margin-bottom:16px;text-align:left;display:none}
@@ -663,9 +676,20 @@
 <!-- ══ STATS OVERLAY ══ -->
 <div id="stats-overlay">
   <div class="stats-box">
-    <h3>📊 Lớp đang chọn gì?</h3>
-    <div class="your-pick" id="your-pick"></div>
-    <div id="stat-bars"></div>
+    <div class="stats-tabs">
+      <div class="stats-tab active" id="tab-stats" onclick="switchStatsTab('stats')">📊 Thống kê lớp</div>
+      <div class="stats-tab" id="tab-review" onclick="switchStatsTab('review')">📋 Xem lại câu hỏi</div>
+    </div>
+    <!-- Panel thống kê -->
+    <div class="stats-panel active" id="panel-stats">
+      <div class="your-pick" id="your-pick"></div>
+      <div id="stat-bars"></div>
+    </div>
+    <!-- Panel xem lại câu hỏi -->
+    <div class="stats-panel" id="panel-review">
+      <div class="review-q" id="review-question"></div>
+      <div id="review-answers"></div>
+    </div>
     <button class="btn-next" id="btn-next" onclick="continueAfterStats()">Câu tiếp theo ▶</button>
   </div>
 </div>
@@ -1290,14 +1314,33 @@ async function answer(chosen){
   await showStats(chosen);
 }
 
+function switchStatsTab(tab){
+  document.getElementById('tab-stats').classList.toggle('active', tab==='stats');
+  document.getElementById('tab-review').classList.toggle('active', tab==='review');
+  document.getElementById('panel-stats').classList.toggle('active', tab==='stats');
+  document.getElementById('panel-review').classList.toggle('active', tab==='review');
+}
+
 async function showStats(chosen){
   const q=questions[current];
+
+  // Reset về tab thống kê mỗi câu
+  switchStatsTab('stats');
 
   document.getElementById('your-pick').innerHTML=
     chosen>=0?`Bạn chọn: <strong>${q.a[chosen]}</strong>`:'⏰ Hết giờ — bạn không kịp chọn';
   const isLast=(current+1>=questions.length);
   document.getElementById('btn-next').textContent=isLast?'Xem kết quả 🏆':'Câu tiếp theo ▶';
   document.getElementById('stat-bars').innerHTML='<div style="text-align:center;color:#6B7F79;padding:16px;font-size:14px">Đang tải kết quả lớp...</div>';
+
+  // Render review panel
+  document.getElementById('review-question').textContent=`Câu ${current+1}: ${q.q}`;
+  document.getElementById('review-answers').innerHTML=q.a.map((ans,i)=>{
+    const isChosen=i===chosen;
+    const cls=isChosen?'chosen':'neutral';
+    return `<div class="review-ans ${cls}">${ICONS[i]} ${ans}${isChosen?' ← bạn chọn':''}</div>`;
+  }).join('');
+
   document.getElementById('stats-overlay').classList.add('show');
 
   // Đợi một chút để đảm bảo answer của mình đã ghi xong
