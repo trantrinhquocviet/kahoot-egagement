@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Career Quest</title>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" onload="lucide.createIcons()"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
 
@@ -23,7 +23,7 @@
   .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px}
   @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-  /* â”€â”€ ADMIN SCREEN â”€â”€ */
+  /* ── ADMIN SCREEN ── */
   .admin-card{
     background:rgba(255,255,255,.07);backdrop-filter:blur(12px);
     border:1px solid rgba(255,255,255,.15);border-radius:20px;
@@ -102,7 +102,7 @@
   .pin-error{font-size:12px;color:#ff6b6b;margin-top:6px;min-height:16px}
   .admin-body{display:none}
 
-  /* â”€â”€ LOGIN SCREEN â”€â”€ */
+  /* ── LOGIN SCREEN ── */
   .login-card{
     background:rgba(255,255,255,.07);backdrop-filter:blur(12px);
     border:1px solid rgba(255,255,255,.15);border-radius:20px;
@@ -134,7 +134,7 @@
   }
   .btn-login:hover{transform:scale(1.03)}
 
-  /* â”€â”€ START SCREEN â”€â”€ */
+  /* ── START SCREEN ── */
   .start-logo{margin-bottom:8px;animation:bounce 1.6s infinite}
   .start-title{font-size:52px;font-weight:900;background:linear-gradient(90deg,#ff6ec7,#ffd700,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;line-height:1.1}
   .start-sub{font-size:20px;color:#ccc;margin:12px 0 8px;text-align:center}
@@ -148,7 +148,7 @@
   }
   .btn-start:hover{transform:scale(1.06);box-shadow:0 10px 32px rgba(168,85,247,.7)}
 
-  /* â”€â”€ QUIZ SCREEN â”€â”€ */
+  /* ── QUIZ SCREEN ── */
   .quiz-header{width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
   .q-meta{display:flex;flex-direction:column;gap:2px}
   .q-progress{font-size:16px;color:#ccc;font-weight:700}
@@ -184,7 +184,7 @@
   .ans-btn.c2{background:linear-gradient(135deg,#fbc02d,#e65100)}
   .ans-btn.c3{background:linear-gradient(135deg,#43a047,#1b5e20)}
 
-  /* â”€â”€ STATS OVERLAY â”€â”€ */
+  /* ── STATS OVERLAY ── */
   #stats-overlay{
     display:none;position:fixed;inset:0;
     background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
@@ -224,7 +224,7 @@
   }
   .btn-next:hover{transform:scale(1.03)}
 
-  /* â”€â”€ LEADERBOARD â”€â”€ */
+  /* ── LEADERBOARD ── */
   .lb-title{font-size:44px;font-weight:900;margin-bottom:8px;background:linear-gradient(90deg,#ffd700,#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
   .lb-card{background:rgba(255,255,255,.08);border-radius:16px;overflow:hidden;width:100%;max-width:540px;margin:20px 0}
   .lb-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
@@ -240,7 +240,7 @@
   }
   .btn-result:hover{transform:scale(1.05)}
 
-  /* â”€â”€ RESULT SCREEN â”€â”€ */
+  /* ── RESULT SCREEN ── */
   .career-card{
     background:rgba(255,255,255,.08);backdrop-filter:blur(12px);
     border:1px solid rgba(255,255,255,.15);border-radius:24px;
@@ -267,10 +267,10 @@
   }
 
 
-  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  /* ─────────────────────────────────────────────
      DUA Edu brand theme override
-     Chá»‰ Ä‘á»•i giao diá»‡n/mÃ u sáº¯c, giá»¯ nguyÃªn luá»“ng code quiz.
-     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+     Chỉ đổi giao diện/màu sắc, giữ nguyên luồng code quiz.
+     ───────────────────────────────────────────── */
   :root{
     --dua-green:#16A34A;
     --dua-green-2:#22C55E;
@@ -454,7 +454,7 @@
     border-color:#EF4444;
   }
 
-  /* â”€â”€ LOBBY SCREEN â”€â”€ */
+  /* ── LOBBY SCREEN ── */
   .lobby-card{
     background:var(--dua-card);border:1px solid var(--dua-border);
     border-radius:24px;padding:40px 36px;width:100%;max-width:520px;
@@ -542,35 +542,35 @@
 <!-- â•â• ADMIN SETUP â•â• -->
 <div id="admin" class="screen">
   <div class="admin-card">
-    <div class="admin-title"><i data-lucide="layout-dashboard" style="width:22px;height:22px;vertical-align:middle;margin-right:8px"></i>Thiáº¿t láº­p buá»•i há»c</div>
+    <div class="admin-title"><i data-lucide="layout-dashboard" style="width:22px;height:22px;vertical-align:middle;margin-right:8px"></i>Thiết lập buổi học</div>
 
     <!-- PIN gate -->
     <div id="adminGate">
-      <div class="admin-sub">Nháº­p mÃ£ PIN Ä‘á»ƒ tiáº¿p tá»¥c.</div>
+      <div class="admin-sub">Nhập mã PIN để tiếp tục.</div>
       <div class="pin-row">
-        <input class="pin-input" id="pinInput" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢"
+        <input class="pin-input" id="pinInput" type="password" placeholder="••••••"
                onkeydown="if(event.key==='Enter')checkPin()">
-        <button class="btn-pin" onclick="checkPin()">XÃ¡c nháº­n</button>
+        <button class="btn-pin" onclick="checkPin()">Xác nhận</button>
       </div>
       <div class="pin-error" id="pinError"></div>
     </div>
 
     <!-- Admin body (shown after PIN) -->
     <div class="admin-body" id="adminBody">
-    <div class="admin-sub">Äáº·t tÃªn buá»•i há»c, sau Ä‘Ã³ upload danh sÃ¡ch email há»c viÃªn.</div>
+    <div class="admin-sub">Đặt tên buổi học, sau Ä‘ó upload danh sách email học viên.</div>
 
     <div class="session-name-wrap">
-      <label class="session-name-label" for="sessionNameInput">TÃªn buá»•i há»c</label>
+      <label class="session-name-label" for="sessionNameInput">Tên buổi học</label>
       <input class="session-name-input" id="sessionNameInput" type="text"
-             placeholder="VÃ­ dá»¥: Lá»›p K19 - Buá»•i 1"
+             placeholder="Ví dụ: Lớp K19 - Buổi 1"
              onkeydown="if(event.key==='Enter')document.getElementById('xlFile').click()">
     </div>
 
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('xlFile').click()">
       <input type="file" id="xlFile" accept=".xlsx,.xls,.csv" onchange="handleFile(this)">
       <div class="uz-icon"><i data-lucide="upload-cloud" style="width:40px;height:40px;stroke:#a855f7"></i></div>
-      <div class="uz-text">KÃ©o tháº£ hoáº·c <strong>nháº¥n Ä‘á»ƒ chá»n file</strong></div>
-      <div class="uz-hint">Há»— trá»£ .xlsx Â· .xls Â· .csv â€” cá»™t email cÃ³ thá»ƒ Ä‘áº·t tÃªn tÃ¹y Ã½</div>
+      <div class="uz-text">Kéo thả hoặc <strong>nhấn để chọn file</strong></div>
+      <div class="uz-hint">Hỗ trợ .xlsx · .xls · .csv — cột email có thể Ä‘ặt tên tùy ý</div>
     </div>
 
     <div class="email-preview" id="emailPreview">
@@ -579,24 +579,24 @@
     </div>
 
     <div class="share-box" id="shareBox">
-      <div class="sb-label"><i data-lucide="link-2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"></i>Link chia sáº» cho há»c viÃªn</div>
+      <div class="sb-label"><i data-lucide="link-2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"></i>Link chia sẻ cho học viên</div>
       <div class="share-url-row">
         <div class="share-url" id="shareUrl"></div>
-        <button class="btn-copy" id="btnCopy" onclick="copyLink()">Sao chÃ©p</button>
+        <button class="btn-copy" id="btnCopy" onclick="copyLink()">Sao chép</button>
       </div>
     </div>
 
     <button class="btn-admin-save" id="btnSave" onclick="saveAndActivate()">
-      LÆ°u danh sÃ¡ch &amp; kÃ­ch hoáº¡t
+      Lưu danh sách &amp; kích hoạt
     </button>
     <div class="session-status" id="sessionStatus" style="display:none">
-      Buá»•i há»c Ä‘ang hoáº¡t Ä‘á»™ng â€” há»c viÃªn cÃ³ thá»ƒ Ä‘Äƒng nháº­p
+      Buổi học đang hoạt động — học viên có thể đăng nhập
     </div>
-    <div class="admin-reset" onclick="resetAll()">XoÃ¡ danh sÃ¡ch cÅ© &amp; báº¯t Ä‘áº§u láº¡i</div>
+    <div class="admin-reset" onclick="resetAll()">Xoá danh sách cũ &amp; bắt Ä‘ầu lại</div>
     <div class="admin-lobby" id="adminLobby">
-      <div class="admin-lobby-title"><i data-lucide="users" style="width:14px;height:14px;vertical-align:middle;margin-right:5px"></i>Há»c viÃªn Ä‘ang chá» (<span id="adminLobbyCount">0</span>)</div>
+      <div class="admin-lobby-title"><i data-lucide="users" style="width:14px;height:14px;vertical-align:middle;margin-right:5px"></i>Học viên đang chờ (<span id="adminLobbyCount">0</span>)</div>
       <div class="admin-lobby-list" id="adminLobbyList"></div>
-      <button class="btn-start-game" onclick="adminStartGame()">Báº¯t Ä‘áº§u ngay</button>
+      <button class="btn-start-game" onclick="adminStartGame()">Bắt Ä‘ầu ngay</button>
     </div>
     </div><!-- /adminBody -->
   </div>
@@ -607,15 +607,15 @@
   <div class="login-card">
     <div class="login-logo"><i data-lucide="target" style="width:52px;height:52px;stroke:var(--dua-green,#16A34A);stroke-width:1.5"></i></div>
     <div class="login-title">AI Career Quest</div>
-    <div class="login-sub">Chá»n buá»•i há»c vÃ  nháº­p email Ä‘á»ƒ tham gia</div>
+    <div class="login-sub">Chọn buổi học và nhập email để tham gia</div>
     <div class="session-selector" id="sessionSelector">
-      <div class="session-selector-label">Chá»n buá»•i há»c cá»§a báº¡n:</div>
+      <div class="session-selector-label">Chọn buổi học của bạn:</div>
       <div id="sessionList"></div>
     </div>
     <input class="email-input" id="emailInput" type="email" placeholder="email@company.com"
            onkeydown="if(event.key==='Enter')doLogin()">
     <div class="login-error" id="loginError"></div>
-    <button class="btn-login" onclick="doLogin()">VÃ o chÆ¡i</button>
+    <button class="btn-login" onclick="doLogin()">Vào chơi</button>
   </div>
 </div>
 
@@ -623,15 +623,15 @@
 <div id="lobby" class="screen">
   <div class="lobby-card">
     <div class="lobby-pulse"><i data-lucide="loader-2" style="width:32px;height:32px;animation:spin 1.2s linear infinite"></i></div>
-    <div class="lobby-title">Äang chá» vÃ o lá»›p...</div>
+    <div class="lobby-title">Đang chờ vào lớp...</div>
     <div class="lobby-session-badge" id="lobbySessionBadge" style="display:none"></div>
     <div class="lobby-sub" id="lobbyEmail"></div>
     <div class="lobby-count" id="lobbyCount">0</div>
-    <div class="lobby-count-label">há»c viÃªn Ä‘Ã£ vÃ o</div>
+    <div class="lobby-count-label">học viên Ä‘ã vào</div>
     <div class="lobby-players" id="lobbyPlayers">
-      <div class="lobby-waiting">ChÆ°a cÃ³ ai vÃ o...</div>
+      <div class="lobby-waiting">Chưa có ai vào...</div>
     </div>
-    <div style="font-size:13px;color:var(--dua-muted)">Giáº£ng viÃªn sáº½ báº¯t Ä‘áº§u khi Ä‘á»§ ngÆ°á»i</div>
+    <div style="font-size:13px;color:var(--dua-muted)">Giảng viên sẽ bắt Ä‘ầu khi Ä‘ủ người</div>
   </div>
 </div>
 
@@ -639,21 +639,21 @@
 <div id="start" class="screen">
   <div class="start-logo"><i data-lucide="target" style="width:68px;height:68px;stroke-width:1.2"></i></div>
   <div class="start-title">AI CAREER QUEST</div>
-  <div class="start-sub">Xin chÃ o,</div>
+  <div class="start-sub">Xin chào,</div>
   <div class="start-name" id="welcomeName"></div>
   <div style="margin-bottom:28px">
-    <span class="pill">21 cÃ¢u há»i</span>
-    <span class="pill">30 giÃ¢y / cÃ¢u</span>
-    <span class="pill">TÃ­nh Ä‘iá»ƒm theo tá»‘c Ä‘á»™</span>
+    <span class="pill">21 câu hỏi</span>
+    <span class="pill">30 giây / câu</span>
+    <span class="pill">Tính điểm theo tốc độ</span>
   </div>
-  <button class="btn-start" onclick="startGame()">Báº®T Äáº¦U NGAY</button>
+  <button class="btn-start" onclick="startGame()">BẮT ĐẦU NGAY</button>
 </div>
 
 <!-- â•â• QUIZ â•â• -->
 <div id="quiz" class="screen">
   <div class="quiz-header">
     <div class="q-meta">
-      <div class="q-progress" id="progress">CÃ¢u 1/3</div>
+      <div class="q-progress" id="progress">Câu 1/3</div>
       <div class="q-player" id="qPlayer"></div>
     </div>
     <div class="timer-wrap">
@@ -687,31 +687,31 @@
 <div id="stats-overlay">
   <div class="stats-box">
     <div class="stats-tabs">
-      <div class="stats-tab active" id="tab-stats" onclick="switchStatsTab('stats')">Thá»‘ng kÃª lá»›p</div>
-      <div class="stats-tab" id="tab-review" onclick="switchStatsTab('review')">Xem láº¡i cÃ¢u há»i</div>
+      <div class="stats-tab active" id="tab-stats" onclick="switchStatsTab('stats')">Thống kê lớp</div>
+      <div class="stats-tab" id="tab-review" onclick="switchStatsTab('review')">Xem lại câu hỏi</div>
     </div>
-    <!-- Panel thá»‘ng kÃª -->
+    <!-- Panel thống kê -->
     <div class="stats-panel active" id="panel-stats">
       <div class="your-pick" id="your-pick"></div>
       <div id="stat-bars"></div>
     </div>
-    <!-- Panel xem láº¡i cÃ¢u há»i -->
+    <!-- Panel xem lại câu hỏi -->
     <div class="stats-panel" id="panel-review">
       <div class="review-q" id="review-question"></div>
       <div id="review-answers"></div>
     </div>
-    <button class="btn-next" id="btn-next" onclick="continueAfterStats()">CÃ¢u tiáº¿p theo â–¶</button>
+    <button class="btn-next" id="btn-next" onclick="continueAfterStats()">Câu tiếp theo ▶</button>
   </div>
 </div>
 
 <!-- â•â• LEADERBOARD â•â• -->
 <div id="leaderboard" class="screen">
   <div class="lb-title">LEADERBOARD</div>
-  <div style="font-size:18px;font-weight:700;color:#6B7F79;margin-bottom:4px">Äiá»ƒm cá»§a báº¡n: <span id="scoreShow" style="color:#16A34A;font-size:22px">0</span></div>
+  <div style="font-size:18px;font-weight:700;color:#6B7F79;margin-bottom:4px">Điểm của bạn: <span id="scoreShow" style="color:#16A34A;font-size:22px">0</span></div>
   <div class="lb-card" id="lbCard">
-    <div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Äang táº£i...</div>
+    <div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Đang tải...</div>
   </div>
-  <button class="btn-result" onclick="showResult()">Xem nghá» phÃ¹ há»£p</button>
+  <button class="btn-result" onclick="showResult()">Xem nghề phù hợp</button>
 </div>
 
 <!-- â•â• RESULT â•â• -->
@@ -721,19 +721,19 @@
     <div class="career-title" id="careerTitle"></div>
     <div class="career-desc" id="careerDesc"></div>
     <div class="roadmap">
-      <strong>Roadmap Ä‘á» xuáº¥t:</strong><br>
-      SQL â†’ Power BI â†’ Python â†’ AI Agent â†’ Automation
+      <strong>Roadmap Ä‘ề xuất:</strong><br>
+      SQL → Power BI → Python → AI Agent → Automation
     </div>
-    <button class="btn-replay" onclick="goReplay()">ChÆ¡i láº¡i</button>
+    <button class="btn-replay" onclick="goReplay()">Chơi lại</button>
   </div>
 </div>
 
 <script>
-// â”€â”€ Constants â”€â”€
+// ── Constants ──
 const ICONS=['A','B','C','D'];
 const COLORS=['#F97316','#0EA5A4','#EAB308','#22C55E'];
 const LS_KEY='quiz_email_list';
-const ADMIN_PIN='onpoint2024'; // Ä‘á»•i PIN táº¡i Ä‘Ã¢y
+const ADMIN_PIN='onpoint2024'; // đổi PIN tại Ä‘ây
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0Ep4qw-Z_FSq0uU8Ns8QeGpqVxC_ZmJiV4ouZ5f57l6Aar33mVUxIRvW5jMge7Rn8/exec';
 
 async function logImportToSheet(emails) {
@@ -746,7 +746,7 @@ async function logImportToSheet(emails) {
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('KhÃ´ng ghi Ä‘Æ°á»£c Account:', err);
+    console.warn('Không ghi Ä‘ược Account:', err);
     return false;
   }
 }
@@ -761,7 +761,7 @@ async function setSessionActiveFlag(active) {
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('KhÃ´ng ghi Ä‘Æ°á»£c Active flag:', err);
+    console.warn('Không ghi Ä‘ược Active flag:', err);
     return false;
   }
 }
@@ -774,11 +774,11 @@ async function saveScoreToSheet(email, scoreObj) {
       body: JSON.stringify({ action: 'saveScore', email, score: scoreObj })
     });
   } catch (err) {
-    console.warn('KhÃ´ng ghi Ä‘Æ°á»£c Score:', err);
+    console.warn('Không ghi Ä‘ược Score:', err);
   }
 }
 
-// Session ID Ä‘Æ°á»£c set khi giáº£ng viÃªn táº¡o hoáº·c há»c viÃªn chá»n
+// Session ID Ä‘ược set khi giảng viên tạo hoặc học viên chọn
 let SESSION_ID = '';
 let SESSION_NAME = '';
 
@@ -792,7 +792,7 @@ async function createSessionOnSheet(sessionId, sessionName) {
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('KhÃ´ng táº¡o Ä‘Æ°á»£c session:', err);
+    console.warn('Không tạo Ä‘ược session:', err);
     return false;
   }
 }
@@ -833,7 +833,7 @@ async function postAnswer(questionIdx, answerIdx) {
       body: JSON.stringify({ action: 'saveAnswer', session: SESSION_ID, questionIdx, email: currentPlayer, answerIdx })
     });
   } catch (err) {
-    console.warn('KhÃ´ng lÆ°u Ä‘Æ°á»£c cÃ¢u tráº£ lá»i:', err);
+    console.warn('Không lưu Ä‘ược câu trả lời:', err);
   }
 }
 
@@ -844,7 +844,7 @@ async function fetchQuestionStats(questionIdx) {
     const json = await res.json();
     return json.votes || null;
   } catch (err) {
-    console.warn('KhÃ´ng láº¥y Ä‘Æ°á»£c stats:', err);
+    console.warn('Không lấy Ä‘ược stats:', err);
     return null;
   }
 }
@@ -856,7 +856,7 @@ async function fetchLeaderboard() {
     const json = await res.json();
     return json.scores || [];
   } catch (err) {
-    console.warn('KhÃ´ng láº¥y Ä‘Æ°á»£c leaderboard:', err);
+    console.warn('Không lấy Ä‘ược leaderboard:', err);
     return [];
   }
 }
@@ -898,7 +898,7 @@ const questions=[
   {q:"Tiêu đề biểu đồ hiệu quả nhất là gì trong các lựa chọn sau?",a:["'Doanh thu Q4/2024 tăng 32% — cao nhất trong 3 năm'","'Revenue Chart'","'Sum of Revenue by Quarter'","'Biểu đồ doanh thu'"],t:["data","creative","biz","eng"]}
 ];
 
-// â”€â”€ State â”€â”€
+// ── State ──
 let emailList=[];      // normalised lowercase emails
 let currentPlayer=''; // email of logged-in student
 let score={data:0,biz:0,eng:0,creative:0};
@@ -914,11 +914,11 @@ async function enterLobby(email) {
   // Show session name badge in lobby
   const badge = document.getElementById('lobbySessionBadge');
   if (SESSION_NAME) {
-    badge.textContent = 'ðŸ“š ' + SESSION_NAME;
+    badge.textContent = '📚 ' + SESSION_NAME;
     badge.style.display = 'inline-block';
   }
   show('lobby');
-  // Check-in vÃ o sheet
+  // Check-in vào sheet
   if (APPS_SCRIPT_URL) {
     try {
       const url = `${APPS_SCRIPT_URL}?action=checkIn&session=${encodeURIComponent(SESSION_ID)}&email=${encodeURIComponent(email)}&t=${Date.now()}`;
@@ -926,10 +926,10 @@ async function enterLobby(email) {
       const json = await res.json();
       console.log('[checkIn]', json, 'session:', SESSION_ID);
     } catch(e) {
-      console.error('[checkIn] lá»—i:', e);
+      console.error('[checkIn] lỗi:', e);
     }
   }
-  // Báº¯t Ä‘áº§u poll â€” jitter Ä‘á»ƒ trÃ¡nh spike Ä‘á»“ng thá»i khi nhiá»u há»c sinh cÃ¹ng vÃ o
+  // Bắt Ä‘ầu poll — jitter để tránh spike đồng thời khi nhiều học sinh cùng vào
   const jitter = Math.random() * 2000;
   setTimeout(() => {
     pollLobby();
@@ -944,7 +944,7 @@ async function pollLobby() {
     const json = await res.json();
     console.log('[pollLobby]', json);
 
-    // Cáº­p nháº­t UI lobby
+    // Cập nhật UI lobby
     const players = json.players || [];
     document.getElementById('lobbyCount').textContent = players.length;
     if (players.length > 0) {
@@ -952,24 +952,24 @@ async function pollLobby() {
         .map(p => `<div class="lobby-player-row">${p}</div>`).join('');
     }
 
-    // Náº¿u game Ä‘Ã£ start vÃ  session khá»›p â†’ vÃ o quiz
+    // Nếu game Ä‘ã start và session khớp → vào quiz
     if (json.state === 'started') {
       clearInterval(lobbyPollInterval);
       startGame();
     }
   } catch(e) {
-    console.error('[pollLobby] lá»—i:', e);
+    console.error('[pollLobby] lỗi:', e);
   }
 }
 
-// â”€â”€ Boot â”€â”€
+// ── Boot ──
 (function init(){
   const isAdmin=location.search.includes('admin');
   if(isAdmin){
     show('admin');
     if(sessionStorage.getItem('admin_ok')){
       unlockAdmin();
-      // KhÃ´i phá»¥c session ID vÃ  tÃªn session Ä‘Ã£ lÆ°u
+      // Khôi phục session ID và tên session Ä‘ã lưu
       const storedSessionId = localStorage.getItem('admin_session_id');
       const storedSessionName = localStorage.getItem('admin_session_name');
       if (storedSessionId) {
@@ -984,10 +984,10 @@ async function pollLobby() {
         showShareBox();
         const btn=document.getElementById('btnSave');
         btn.classList.add('ready');
-        btn.innerHTML=`ðŸ”„ DÃ¹ng láº¡i ${emailList.length} email Ä‘Ã£ lÆ°u &amp; kÃ­ch hoáº¡t`;
+        btn.innerHTML=`🔄 Dùng lại ${emailList.length} email Ä‘ã lưu &amp; kích hoạt`;
         document.getElementById('adminLobby').style.display='block';
         if (SESSION_NAME) {
-          document.getElementById('sessionStatus').textContent = `ðŸŸ¢ "${SESSION_NAME}" Ä‘ang hoáº¡t Ä‘á»™ng â€” há»c viÃªn cÃ³ thá»ƒ Ä‘Äƒng nháº­p`;
+          document.getElementById('sessionStatus').textContent = `🟢 "${SESSION_NAME}" đang hoạt động — học viên có thể đăng nhập`;
           document.getElementById('sessionStatus').style.display = 'block';
         }
         setInterval(pollAdminLobby, 5000);
@@ -996,15 +996,15 @@ async function pollLobby() {
       }
     }
   } else {
-    // Há»c viÃªn: fetch danh sÃ¡ch email tá»« sheet (khÃ´ng dÃ¹ng localStorage)
+    // Học viên: fetch danh sách email từ sheet (không dùng localStorage)
     show('login');
-    document.getElementById('loginError').textContent='Äang táº£i danh sÃ¡ch...';
+    document.getElementById('loginError').textContent='Đang tải danh sách...';
     document.getElementById('emailInput').disabled=true;
     document.querySelector('.btn-login').disabled=true;
     document.querySelector('.btn-login').style.opacity='0.4';
     fetchAccountList();
   }
-  lucide.createIcons();
+  if(window.lucide) lucide.createIcons();
 })();
 
 async function fetchAccountList(){
@@ -1012,7 +1012,7 @@ async function fetchAccountList(){
   const inp=document.getElementById('emailInput');
   const btn=document.querySelector('.btn-login');
   if(!APPS_SCRIPT_URL){
-    errEl.textContent='âš ï¸ Giáº£ng viÃªn chÆ°a kÃ­ch hoáº¡t buá»•i há»c.';
+    errEl.textContent='âš ️ Giảng viên chưa kích hoạt buổi học.';
     return;
   }
   try{
@@ -1028,7 +1028,7 @@ async function fetchAccountList(){
     const sessions = sessionsJson.sessions || [];
 
     if (sessions.length === 0) {
-      errEl.textContent='âš ï¸ ChÆ°a cÃ³ buá»•i há»c nÃ o Ä‘ang hoáº¡t Ä‘á»™ng.';
+      errEl.textContent='âš ️ Chưa có buổi học nào đang hoạt động.';
       setTimeout(fetchAccountList, 5000);
       return;
     }
@@ -1039,9 +1039,9 @@ async function fetchAccountList(){
     selectorEl.style.display = 'block';
     listEl.innerHTML = sessions.map(s => `
       <div class="session-option" data-id="${s.id}" onclick="selectSession('${s.id}','${s.name.replace(/'/g,"\\'")}')">
-        <span class="so-icon">ðŸ“š</span>
+        <span class="so-icon">📚</span>
         <span class="so-name">${s.name}</span>
-        <span class="so-check">âœ”</span>
+        <span class="so-check">✔</span>
       </div>
     `).join('');
 
@@ -1059,26 +1059,26 @@ async function fetchAccountList(){
         btn.disabled=false;
         btn.style.opacity='1';
       } else {
-        errEl.textContent='ðŸ‘† HÃ£y chá»n buá»•i há»c cá»§a báº¡n';
+        errEl.textContent='👆 Hãy chọn buổi học của bạn';
       }
     } else {
-      errEl.textContent='â³ Äang táº£i danh sÃ¡ch...';
+      errEl.textContent='⏳ Đang tải danh sách...';
       setTimeout(fetchAccountList, 5000);
     }
   } catch(e){
-    errEl.textContent='âš ï¸ KhÃ´ng káº¿t ná»‘i Ä‘Æ°á»£c â€” thá»­ láº¡i...';
+    errEl.textContent='âš ️ Không kết nối Ä‘ược — thử lại...';
     setTimeout(fetchAccountList, 5000);
   }
 }
 
-// â”€â”€ Admin PIN â”€â”€
+// ── Admin PIN ──
 function checkPin(){
   const val=document.getElementById('pinInput').value;
   if(val===ADMIN_PIN){
     sessionStorage.setItem('admin_ok','1');
     unlockAdmin();
   } else {
-    document.getElementById('pinError').textContent='PIN khÃ´ng Ä‘Ãºng.';
+    document.getElementById('pinError').textContent='PIN không Ä‘úng.';
     document.getElementById('pinInput').classList.add('error');
     setTimeout(()=>document.getElementById('pinInput').classList.remove('error'),400);
   }
@@ -1102,23 +1102,23 @@ function handleFile(input){
       const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
       parsedEmails=extractEmails(rows);
       if(parsedEmails.length===0){
-        alert('KhÃ´ng tÃ¬m tháº¥y email há»£p lá»‡ trong file. HÃ£y kiá»ƒm tra láº¡i.');
+        alert('Không tìm thấy email hợp lệ trong file. Hãy kiểm tra lại.');
         return;
       }
       renderPreview(parsedEmails);
       showShareBox();
       logImportToSheet(parsedEmails);
       document.getElementById('btnSave').classList.add('ready');
-      document.getElementById('btnSave').textContent=`âœ… LÆ°u ${parsedEmails.length} há»c viÃªn &amp; kÃ­ch hoáº¡t`;
+      document.getElementById('btnSave').textContent=`✅ Lưu ${parsedEmails.length} học viên &amp; kích hoạt`;
       // Update label properly
-      document.getElementById('btnSave').innerHTML=`âœ… LÆ°u ${parsedEmails.length} há»c viÃªn &amp; kÃ­ch hoáº¡t`;
+      document.getElementById('btnSave').innerHTML=`✅ Lưu ${parsedEmails.length} học viên &amp; kích hoạt`;
     } catch(err){
-      alert('Lá»—i Ä‘á»c file: '+err.message);
+      alert('Lỗi Ä‘ọc file: '+err.message);
     }
   };
   reader.readAsArrayBuffer(file);
   // Reset upload zone label
-  document.querySelector('.uz-text').innerHTML=`<strong>${file.name}</strong> Ä‘Ã£ táº£i xong`;
+  document.querySelector('.uz-text').innerHTML=`<strong>${file.name}</strong> Ä‘ã tải xong`;
 }
 
 function extractEmails(rows){
@@ -1132,7 +1132,7 @@ function extractEmails(rows){
   }
   const startRow=col>=0?1:0;
   if(col<0){
-    // No header found â€” scan all cells for email pattern
+    // No header found — scan all cells for email pattern
     const emails=[];
     for(const row of rows){
       for(const cell of row){
@@ -1154,9 +1154,9 @@ function isEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)}
 
 function renderPreview(list){
   const preview=document.getElementById('emailPreview');
-  document.getElementById('epCount').textContent=`${list.length} email tÃ¬m tháº¥y`;
+  document.getElementById('epCount').textContent=`${list.length} email tìm thấy`;
   document.getElementById('epList').innerHTML=list.slice(0,50).map(e=>`<div class="ep-row">${e}</div>`).join('')
-    +(list.length>50?`<div class="ep-row" style="color:#666">â€¦ vÃ  ${list.length-50} email khÃ¡c</div>`:'');
+    +(list.length>50?`<div class="ep-row" style="color:#666">… và ${list.length-50} email khác</div>`:'');
   preview.style.display='block';
 }
 
@@ -1171,21 +1171,21 @@ function copyLink(){
   const url=document.getElementById('shareUrl').textContent;
   navigator.clipboard.writeText(url).then(()=>{
     const btn=document.getElementById('btnCopy');
-    btn.textContent='ÄÃ£ sao chÃ©p âœ“';
+    btn.textContent='Đã sao chép ✓';
     btn.classList.add('copied');
-    setTimeout(()=>{btn.textContent='Sao chÃ©p';btn.classList.remove('copied');},2000);
+    setTimeout(()=>{btn.textContent='Sao chép';btn.classList.remove('copied');},2000);
   });
 }
 
 async function saveAndActivate(){
   const toSave=parsedEmails.length>0?parsedEmails:emailList;
   if(toSave.length===0){
-    alert('ChÆ°a cÃ³ danh sÃ¡ch email. Vui lÃ²ng táº£i file lÃªn trÆ°á»›c.');
+    alert('Chưa có danh sách email. Vui lòng tải file lên trước.');
     return;
   }
   const sessionNameVal = document.getElementById('sessionNameInput').value.trim();
   if (!sessionNameVal) {
-    alert('Vui lÃ²ng nháº­p tÃªn buá»•i há»c trÆ°á»›c khi kÃ­ch hoáº¡t.');
+    alert('Vui lòng nhập tên buổi học trước khi kích hoạt.');
     document.getElementById('sessionNameInput').focus();
     return;
   }
@@ -1195,24 +1195,24 @@ async function saveAndActivate(){
 
   const btn=document.getElementById('btnSave');
   btn.disabled=true;
-  btn.innerHTML='â³ Äang Ä‘á»“ng bá»™ lÃªn Sheet...';
+  btn.innerHTML='⏳ Đang đồng bộ lên Sheet...';
   localStorage.setItem(LS_KEY, JSON.stringify(toSave));
   localStorage.setItem('admin_session_id', SESSION_ID);
   localStorage.setItem('admin_session_name', SESSION_NAME);
 
   const ok=await logImportToSheet(toSave);
   if(!ok){
-    btn.innerHTML='âš ï¸ LÆ°u tháº¥t báº¡i â€” thá»­ láº¡i';
+    btn.innerHTML='âš ️ Lưu thất bại — thử lại';
     btn.disabled=false;
-    alert('KhÃ´ng Ä‘á»“ng bá»™ Ä‘Æ°á»£c danh sÃ¡ch lÃªn Google Sheet. Kiá»ƒm tra káº¿t ná»‘i vÃ  thá»­ láº¡i.');
+    alert('Không đồng bộ Ä‘ược danh sách lên Google Sheet. Kiểm tra kết nối và thử lại.');
     return;
   }
-  // Táº¡o session trÃªn sheet
+  // Tạo session trên sheet
   await createSessionOnSheet(SESSION_ID, SESSION_NAME);
   await fetch(`${APPS_SCRIPT_URL}?action=setGameState&state=waiting&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
 
-  btn.innerHTML='âœ… ÄÃ£ lÆ°u! Chia sáº» link cho há»c viÃªn.';
-  document.getElementById('sessionStatus').textContent = `ðŸŸ¢ "${SESSION_NAME}" Ä‘ang hoáº¡t Ä‘á»™ng â€” há»c viÃªn cÃ³ thá»ƒ Ä‘Äƒng nháº­p`;
+  btn.innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+  document.getElementById('sessionStatus').textContent = `🟢 "${SESSION_NAME}" đang hoạt động — học viên có thể đăng nhập`;
   document.getElementById('sessionStatus').style.display='block';
   document.getElementById('adminLobby').style.display='block';
   setInterval(pollAdminLobby, 5000);
@@ -1228,7 +1228,7 @@ async function pollAdminLobby() {
     document.getElementById('adminLobbyCount').textContent = players.length;
     document.getElementById('adminLobbyList').innerHTML = players.length > 0
       ? players.map(p => `<div class="admin-lobby-row">${p}</div>`).join('')
-      : '<div style="color:#6B7F79;font-style:italic;font-size:13px">ChÆ°a cÃ³ há»c viÃªn nÃ o vÃ o...</div>';
+      : '<div style="color:#6B7F79;font-style:italic;font-size:13px">Chưa có học viên nào vào...</div>';
   } catch(e) {}
 }
 
@@ -1236,21 +1236,21 @@ async function adminStartGame() {
   if (!APPS_SCRIPT_URL) return;
   try {
     await fetch(`${APPS_SCRIPT_URL}?action=setGameState&state=started&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
-    document.querySelector('.btn-start-game').textContent = 'âœ… ÄÃ£ báº¯t Ä‘áº§u!';
+    document.querySelector('.btn-start-game').textContent = '✅ Đã bắt Ä‘ầu!';
     document.querySelector('.btn-start-game').disabled = true;
   } catch(e) {
-    alert('Lá»—i khi báº¯t Ä‘áº§u game: ' + e.message);
+    alert('Lỗi khi bắt Ä‘ầu game: ' + e.message);
   }
 }
 
 function resetAll(){
-  if(confirm('XoÃ¡ toÃ n bá»™ danh sÃ¡ch email Ä‘Ã£ lÆ°u?')){
+  if(confirm('Xoá toàn bộ danh sách email Ä‘ã lưu?')){
     localStorage.removeItem(LS_KEY);
     location.reload();
   }
 }
 
-// â”€â”€ Drag-and-drop on upload zone â”€â”€
+// ── Drag-and-drop on upload zone ──
 const zone=document.getElementById('uploadZone');
 zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='#16A34A';zone.style.background='rgba(34,197,94,.12)'});
 zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background=''});
@@ -1268,17 +1268,17 @@ function doLogin(){
   const err=document.getElementById('loginError');
   const inp=document.getElementById('emailInput');
   if(!SESSION_ID){
-    err.textContent='ðŸ‘† Vui lÃ²ng chá»n buá»•i há»c trÆ°á»›c.';
+    err.textContent='Vui lòng chọn buổi học trước.';
     return;
   }
   if(!isEmail(val)){
-    err.textContent='Vui lÃ²ng nháº­p Ä‘Ãºng Ä‘á»‹nh dáº¡ng email.';
+    err.textContent='Vui lòng nhập Ä‘úng định dạng email.';
     inp.classList.add('error');
     setTimeout(()=>inp.classList.remove('error'),400);
     return;
   }
   if(!emailList.includes(val)){
-    err.textContent='Email nÃ y khÃ´ng cÃ³ trong danh sÃ¡ch Ä‘Äƒng kÃ½.';
+    err.textContent='Email này không có trong danh sách đăng ký.';
     inp.classList.add('error');
     setTimeout(()=>inp.classList.remove('error'),400);
     return;
@@ -1349,31 +1349,31 @@ function switchStatsTab(tab){
 async function showStats(chosen){
   const q=questions[current];
 
-  // Reset vá» tab thá»‘ng kÃª má»—i cÃ¢u
+  // Reset về tab thống kê mỗi câu
   switchStatsTab('stats');
 
   document.getElementById('your-pick').innerHTML=
-    chosen>=0?`Báº¡n chá»n: <strong>${q.a[chosen]}</strong>`:'â° Háº¿t giá» â€” báº¡n khÃ´ng ká»‹p chá»n';
+    chosen>=0?`Bạn chọn: <strong>${q.a[chosen]}</strong>`:'⏰ Hết giờ — bạn không kịp chọn';
   const isLast=(current+1>=questions.length);
-  document.getElementById('btn-next').textContent=isLast?'Xem káº¿t quáº£ ðŸ†':'CÃ¢u tiáº¿p theo â–¶';
-  document.getElementById('stat-bars').innerHTML='<div style="text-align:center;color:#6B7F79;padding:16px;font-size:14px">Äang táº£i káº¿t quáº£ lá»›p...</div>';
+  document.getElementById('btn-next').textContent=isLast?'Xem kết quả ðŸ†':'Câu tiếp theo ▶';
+  document.getElementById('stat-bars').innerHTML='<div style="text-align:center;color:#6B7F79;padding:16px;font-size:14px">Đang tải kết quả lớp...</div>';
 
   // Render review panel
-  document.getElementById('review-question').textContent=`CÃ¢u ${current+1}: ${q.q}`;
+  document.getElementById('review-question').textContent=`Câu ${current+1}: ${q.q}`;
   document.getElementById('review-answers').innerHTML=q.a.map((ans,i)=>{
     const isChosen=i===chosen;
     const cls=isChosen?'chosen':'neutral';
-    return `<div class="review-ans ${cls}">${ICONS[i]} ${ans}${isChosen?' â† báº¡n chá»n':''}</div>`;
+    return `<div class="review-ans ${cls}">${ICONS[i]} ${ans}${isChosen?' â† bạn chọn':''}</div>`;
   }).join('');
 
   document.getElementById('stats-overlay').classList.add('show');
 
-  // Äá»£i má»™t chÃºt Ä‘á»ƒ Ä‘áº£m báº£o answer cá»§a mÃ¬nh Ä‘Ã£ ghi xong
+  // Đợi một chút để Ä‘ảm bảo answer của mình Ä‘ã ghi xong
   await new Promise(r => setTimeout(r, 1200));
   const realVotes = await fetchQuestionStats(current);
 
   let votes = realVotes || [0,0,0,0];
-  // Náº¿u khÃ´ng láº¥y Ä‘Æ°á»£c data tháº­t, dÃ¹ng random fallback
+  // Nếu không lấy Ä‘ược data thật, dùng random fallback
   if(!realVotes){
     if(chosen>=0) votes[chosen]++;
     const total=Math.floor(Math.random()*18)+8;
@@ -1421,11 +1421,11 @@ function startPart2(){
 
 async function renderLeaderboard(myTotal){
   const lbCard = document.getElementById('lbCard');
-  lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Äang táº£i...</div>';
+  lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Đang tải...</div>';
 
   const scores = await fetchLeaderboard();
   if(scores.length === 0){
-    lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">ChÆ°a cÃ³ dá»¯ liá»‡u</div>';
+    lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Chưa có dữ liệu</div>';
     return;
   }
 
@@ -1436,7 +1436,7 @@ async function renderLeaderboard(myTotal){
     const name = s.email.split('@')[0];
     return `<div class="lb-row${isMe?' you':''}">
       <div class="lb-rank">${rank}</div>
-      <div class="lb-name">${name}${isMe?' (báº¡n)':''}</div>
+      <div class="lb-name">${name}${isMe?' (bạn)':''}</div>
       <div class="lb-score">${s.total}</div>
     </div>`;
   }).join('');
@@ -1445,14 +1445,14 @@ async function renderLeaderboard(myTotal){
 function showResult(){
   const career=Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
   const map={
-    data:{icon:'bar-chart-2',title:'Data Analyst',desc:'Báº¡n cÃ³ tÆ° duy phÃ¢n tÃ­ch sáº¯c bÃ©n. Nghá» nÃ y phÃ¹ há»£p vá»›i ngÆ°á»i thÃ­ch biáº¿n sá»‘ liá»‡u thÃ nh insight vÃ  xÃ¢y dá»±ng dashboard Ä‘á»ƒ há»— trá»£ ra quyáº¿t Ä‘á»‹nh.'},
-    biz:{icon:'briefcase',title:'Business Analyst',desc:'Báº¡n giá»i káº¿t ná»‘i giá»¯a business vÃ  cÃ´ng nghá»‡. Nghá» nÃ y cáº§n ngÆ°á»i hiá»ƒu cáº£ quy trÃ¬nh kinh doanh láº«n cÃ¡ch cÃ´ng nghá»‡ cÃ³ thá»ƒ cáº£i thiá»‡n nÃ³.'},
-    eng:{icon:'code-2',title:'Tech / Engineer',desc:'Báº¡n thÃ­ch xÃ¢y dá»±ng há»‡ thá»‘ng vÃ  láº­p trÃ¬nh. Nghá» nÃ y lÃ  ná»n táº£ng Ä‘á»ƒ táº¡o ra cÃ¡c cÃ´ng cá»¥ thá»±c sá»± hoáº¡t Ä‘á»™ng trong production.'},
-    creative:{icon:'pen-tool',title:'Content Creator',desc:'Báº¡n máº¡nh vá» sÃ¡ng táº¡o vÃ  giao tiáº¿p. Nghá» nÃ y phÃ¹ há»£p vá»›i ngÆ°á»i thÃ­ch táº¡o ná»™i dung, hÃ¬nh áº£nh, vÃ  chiáº¿n dá»‹ch marketing ná»•i báº­t.'}
+    data:{icon:'bar-chart-2',title:'Data Analyst',desc:'Bạn có tư duy phân tích sắc bén. Nghề này phù hợp với người thích biến số liệu thành insight và xây dựng dashboard để hỗ trợ ra quyết định.'},
+    biz:{icon:'briefcase',title:'Business Analyst',desc:'Bạn giỏi kết nối giữa business và công nghệ. Nghề này cần người hiểu cả quy trình kinh doanh lẫn cách công nghệ có thể cải thiện nó.'},
+    eng:{icon:'code-2',title:'Tech / Engineer',desc:'Bạn thích xây dựng hệ thống và lập trình. Nghề này là nền tảng để tạo ra các công cụ thực sự hoạt động trong production.'},
+    creative:{icon:'pen-tool',title:'Content Creator',desc:'Bạn mạnh về sáng tạo và giao tiếp. Nghề này phù hợp với người thích tạo nội dung, hình ảnh, và chiến dịch marketing nổi bật.'}
   };
   const m=map[career];
   document.getElementById('careerIcon').innerHTML=`<i data-lucide="${m.icon}" style="width:72px;height:72px;stroke-width:1.2"></i>`;
-  lucide.createIcons();
+  if(window.lucide) lucide.createIcons();
   document.getElementById('careerTitle').textContent=m.title;
   document.getElementById('careerDesc').textContent=m.desc;
   show('result');
@@ -1463,7 +1463,7 @@ function goReplay(){location.href=location.href.replace(/[?#].*/,'')}
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  lucide.createIcons();
+  if(window.lucide) lucide.createIcons();
 }
 </script>
 </body>
