@@ -34,30 +34,29 @@ function importAccounts(emails) {
 }
 
 // ── Ghi điểm vào sheet Score ──
-function saveScore(email, scoreData) {
+function saveScore(email, scoreData, session) {
   const sheet = getOrCreateSheet(
     "Score",
-    ["Timestamp", "Email", "Data", "Biz", "Eng", "Creative", "Total", "Career"],
+    ["Timestamp", "Session", "Email", "Data", "Biz", "Eng", "Creative", "Total", "Career"],
     "#0EA5A4"
   );
 
   const timestamp = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
   const total = Math.max(scoreData.data, scoreData.biz, scoreData.eng, scoreData.creative);
   const career = Object.entries(scoreData).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+  const sess = session || "";
 
-  // Tìm row cũ của email này và cập nhật
+  // Upsert: tìm row cùng session + email
   const data = sheet.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
-    if (String(data[i][1]).toLowerCase() === email.toLowerCase()) {
-      sheet.getRange(i + 1, 1, 1, 8).setValues([[
-        timestamp, email, scoreData.data, scoreData.biz, scoreData.eng, scoreData.creative, total, career
+    if (String(data[i][1]) === sess && String(data[i][2]).toLowerCase() === email.toLowerCase()) {
+      sheet.getRange(i + 1, 1, 1, 9).setValues([[
+        timestamp, sess, email, scoreData.data, scoreData.biz, scoreData.eng, scoreData.creative, total, career
       ]]);
       return;
     }
   }
-
-  // Chưa có → append mới
-  sheet.appendRow([timestamp, email, scoreData.data, scoreData.biz, scoreData.eng, scoreData.creative, total, career]);
+  sheet.appendRow([timestamp, sess, email, scoreData.data, scoreData.biz, scoreData.eng, scoreData.creative, total, career]);
 }
 
 // ── Lobby: check-in & game state ──
@@ -150,6 +149,17 @@ function getActiveSessions() {
     .map(r => ({ id: String(r[0]), name: String(r[1]), createdAt: String(r[2]) }));
 }
 
+function getAllSessions() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Sessions");
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues();
+  return rows
+    .filter(r => String(r[0]))
+    .map(r => ({ id: String(r[0]), name: String(r[1]), createdAt: String(r[2]), status: String(r[3]) }))
+    .reverse(); // newest first
+}
+
 function endSession(sessionId) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName("Sessions");
@@ -222,23 +232,24 @@ function getQuestionStats(session, questionIdx) {
   return votes;
 }
 
-// ── Lấy danh sách điểm từ sheet Score ──
-function getScores() {
+// ── Lấy danh sách điểm từ sheet Score (có thể lọc theo session) ──
+function getScores(session) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName("Score");
   if (!sheet || sheet.getLastRow() < 2) return [];
 
-  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 8).getValues();
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 9).getValues();
   return rows
-    .filter(r => r[1])
+    .filter(r => r[2] && (!session || String(r[1]) === String(session)))
     .map(r => ({
-      email: r[1],
-      data: r[2],
-      biz: r[3],
-      eng: r[4],
-      creative: r[5],
-      total: r[6],
-      career: r[7]
+      session: r[1],
+      email: r[2],
+      data: r[3],
+      biz: r[4],
+      eng: r[5],
+      creative: r[6],
+      total: r[7],
+      career: r[8]
     }))
     .sort((a, b) => b.total - a.total);
 }
@@ -281,7 +292,12 @@ function doGet(e) {
   }
   if (e.parameter.action === "getScores") {
     return ContentService
-      .createTextOutput(JSON.stringify({ success: true, scores: getScores() }))
+      .createTextOutput(JSON.stringify({ success: true, scores: getScores(e.parameter.session || "") }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  if (e.parameter.action === "getAllSessions") {
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true, sessions: getAllSessions() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
   if (e.parameter.action === "getQuestionStats") {
@@ -305,7 +321,7 @@ function doGet(e) {
       eng: Number(e.parameter.eng)||0,
       creative: Number(e.parameter.creative)||0
     };
-    saveScore(e.parameter.email, scoreObj);
+    saveScore(e.parameter.email, scoreObj, e.parameter.session);
     return ContentService
       .createTextOutput(JSON.stringify({ success: true }))
       .setMimeType(ContentService.MimeType.JSON);

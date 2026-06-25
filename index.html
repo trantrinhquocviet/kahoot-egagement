@@ -466,6 +466,8 @@
   .admin-lb-career{font-size:11px;color:var(--dua-muted);font-weight:600}
   .admin-lb-score{font-size:16px;font-weight:900;color:var(--dua-green)}
   .admin-lb-empty{text-align:center;color:var(--dua-muted);font-size:13px;padding:16px 0}
+  .admin-lb-select{width:100%;padding:8px 12px;border:1px solid var(--dua-border);border-radius:8px;font-size:13px;font-weight:700;color:var(--dua-navy);background:#fff;margin-bottom:10px;cursor:pointer;outline:none}
+  .admin-lb-select:focus{border-color:var(--dua-green)}
 
   .login-error,.pin-error{
     color:#EF4444;
@@ -614,6 +616,9 @@
         <div class="admin-lb-title"><i data-lucide="trophy" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;stroke:var(--dua-green)"></i>Bảng điểm lớp</div>
         <button class="admin-lb-refresh" onclick="loadAdminLeaderboard()"><i data-lucide="refresh-cw" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"></i>Làm mới</button>
       </div>
+      <select class="admin-lb-select" id="adminLbSession" onchange="loadAdminLeaderboard()">
+        <option value="">— Tất cả buổi học —</option>
+      </select>
       <div id="adminLbList"><div class="admin-lb-empty">Chưa có điểm nào...</div></div>
     </div>
     </div><!-- /adminBody -->
@@ -755,7 +760,7 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0Ep4qw-Z_FSq0uU
 async function saveScoreToSheet(email, scoreObj) {
   if (!APPS_SCRIPT_URL) return;
   try {
-    const p = new URLSearchParams({ action:'saveScore', email, ...scoreObj });
+    const p = new URLSearchParams({ action:'saveScore', email, session: SESSION_ID, ...scoreObj });
     await fetch(`${APPS_SCRIPT_URL}?${p}&t=${Date.now()}`);
   } catch (err) {}
 }
@@ -1106,18 +1111,33 @@ async function adminStartGame() {
   }
 }
 
-function showAdminLeaderboard() {
+async function showAdminLeaderboard() {
   document.getElementById('adminLbSection').style.display = 'block';
+  // Load all sessions into dropdown
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=getAllSessions&t=${Date.now()}`);
+    const json = await res.json();
+    const select = document.getElementById('adminLbSession');
+    const statusLabel = {active:'🟢',ended:'⚫'};
+    (json.sessions || []).forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = `${statusLabel[s.status]||'·'} ${s.name} (${s.createdAt.slice(0,10)})`;
+      if (s.id === SESSION_ID) opt.selected = true;
+      select.appendChild(opt);
+    });
+  } catch(e) {}
   loadAdminLeaderboard();
-  // Poll every 10s
   setInterval(loadAdminLeaderboard, 10000);
 }
 
 async function loadAdminLeaderboard() {
   if (!APPS_SCRIPT_URL) return;
   const listEl = document.getElementById('adminLbList');
+  const sessionFilter = document.getElementById('adminLbSession').value;
   try {
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=getScores&t=${Date.now()}`);
+    const url = `${APPS_SCRIPT_URL}?action=getScores${sessionFilter?'&session='+encodeURIComponent(sessionFilter):''}&t=${Date.now()}`;
+    const res = await fetch(url);
     const json = await res.json();
     const scores = (json.scores || []).slice(0, 20);
     if (scores.length === 0) {
