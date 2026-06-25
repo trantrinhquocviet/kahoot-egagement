@@ -451,6 +451,22 @@
   .career-icon{filter:drop-shadow(0 12px 20px rgba(22,163,74,.22))}
   .roadmap strong{color:var(--dua-green)}
 
+  /* ── ADMIN LEADERBOARD ── */
+  .admin-lb{margin-top:20px;border-top:1px solid var(--dua-border);padding-top:16px}
+  .admin-lb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .admin-lb-title{font-size:15px;font-weight:900;color:var(--dua-navy)}
+  .admin-lb-refresh{background:none;border:1px solid var(--dua-border);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--dua-muted);cursor:pointer;display:flex;align-items:center;gap:4px;transition:border-color .15s,color .15s}
+  .admin-lb-refresh:hover{border-color:var(--dua-green);color:var(--dua-green)}
+  .admin-lb-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;margin-bottom:6px;background:rgba(18,58,52,.05);border:1px solid var(--dua-border)}
+  .admin-lb-rank{font-size:17px;font-weight:900;width:28px;text-align:center;color:var(--dua-navy)}
+  .admin-lb-rank.gold{color:#CA8A04}
+  .admin-lb-rank.silver{color:#6B7F79}
+  .admin-lb-rank.bronze{color:#92400E}
+  .admin-lb-name{flex:1;font-size:14px;font-weight:700;color:var(--dua-navy)}
+  .admin-lb-career{font-size:11px;color:var(--dua-muted);font-weight:600}
+  .admin-lb-score{font-size:16px;font-weight:900;color:var(--dua-green)}
+  .admin-lb-empty{text-align:center;color:var(--dua-muted);font-size:13px;padding:16px 0}
+
   .login-error,.pin-error{
     color:#EF4444;
   }
@@ -590,6 +606,15 @@
       <div class="admin-lobby-title"><i data-lucide="users" style="width:14px;height:14px;vertical-align:middle;margin-right:5px"></i>Học viên đang chờ (<span id="adminLobbyCount">0</span>)</div>
       <div class="admin-lobby-list" id="adminLobbyList"></div>
       <button class="btn-start-game" onclick="adminStartGame()">Bắt đầu ngay</button>
+    </div>
+
+    <!-- LEADERBOARD giảng viên -->
+    <div class="admin-lb" id="adminLbSection" style="display:none">
+      <div class="admin-lb-header">
+        <div class="admin-lb-title"><i data-lucide="trophy" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;stroke:var(--dua-green)"></i>Bảng điểm lớp</div>
+        <button class="admin-lb-refresh" onclick="loadAdminLeaderboard()"><i data-lucide="refresh-cw" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"></i>Làm mới</button>
+      </div>
+      <div id="adminLbList"><div class="admin-lb-empty">Chưa có điểm nào...</div></div>
     </div>
     </div><!-- /adminBody -->
   </div>
@@ -930,6 +955,7 @@ async function pollLobby() {
         document.getElementById('sessionStatus').style.display = 'block';
         setInterval(pollAdminLobby, 5000);
         pollAdminLobby();
+        showAdminLeaderboard();
       }
     }
   } else {
@@ -1073,8 +1099,42 @@ async function adminStartGame() {
     await fetch(`${APPS_SCRIPT_URL}?action=setGameState&state=started&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
     document.querySelector('.btn-start-game').textContent = '✅ Đã bắt đầu!';
     document.querySelector('.btn-start-game').disabled = true;
+    // Show leaderboard section and start polling
+    showAdminLeaderboard();
   } catch(e) {
     alert('Lỗi khi bắt đầu game: ' + e.message);
+  }
+}
+
+function showAdminLeaderboard() {
+  document.getElementById('adminLbSection').style.display = 'block';
+  loadAdminLeaderboard();
+  // Poll every 10s
+  setInterval(loadAdminLeaderboard, 10000);
+}
+
+async function loadAdminLeaderboard() {
+  if (!APPS_SCRIPT_URL) return;
+  const listEl = document.getElementById('adminLbList');
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=getScores&t=${Date.now()}`);
+    const json = await res.json();
+    const scores = (json.scores || []).slice(0, 20);
+    if (scores.length === 0) {
+      listEl.innerHTML = '<div class="admin-lb-empty">Chưa có điểm nào...</div>';
+      return;
+    }
+    const careerLabel = {data:'Data Analyst',biz:'Business Analyst',eng:'Data Engineer',creative:'Data Storyteller'};
+    const rankIcon = ['🥇','🥈','🥉'];
+    const rankClass = ['gold','silver','bronze'];
+    listEl.innerHTML = scores.map((s, i) => `
+      <div class="admin-lb-row">
+        <div class="admin-lb-rank ${rankClass[i]||''}">${rankIcon[i]||i+1}</div>
+        <div class="admin-lb-name">${s.email}<div class="admin-lb-career">${careerLabel[s.career]||s.career}</div></div>
+        <div class="admin-lb-score">${s.total}</div>
+      </div>`).join('');
+  } catch(e) {
+    listEl.innerHTML = '<div class="admin-lb-empty">Lỗi tải dữ liệu</div>';
   }
 }
 
