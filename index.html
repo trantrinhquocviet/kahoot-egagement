@@ -429,11 +429,18 @@
     background:rgba(15,46,42,.32);
   }
   .stats-box{
-    background:rgba(255,255,255,.94);
+    background:rgba(255,255,255,.97);
+    color:var(--dua-navy);
   }
   .stats-box h3{color:var(--dua-green)}
+  .your-pick{color:var(--dua-navy)!important}
+  .stat-lbl{color:var(--dua-navy)!important}
   .stat-track{background:rgba(18,58,52,.08)}
   .stat-fill{color:#fff}
+  .review-q{color:var(--dua-navy)!important}
+  .review-ans.neutral{color:var(--dua-navy)!important;background:rgba(18,58,52,.06)!important;border-color:rgba(18,58,52,.14)!important}
+  .stats-tab{color:var(--dua-muted)!important;background:rgba(18,58,52,.05)!important}
+  .stats-tab.active{color:var(--dua-navy)!important;background:rgba(22,163,74,.15)!important}
 
   .lb-row{border-bottom:1px solid rgba(18,58,52,.08)}
   .lb-score{color:var(--dua-green)}
@@ -723,13 +730,9 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0Ep4qw-Z_FSq0uU
 async function saveScoreToSheet(email, scoreObj) {
   if (!APPS_SCRIPT_URL) return;
   try {
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'saveScore', email, score: scoreObj })
-    });
-  } catch (err) {
-    console.warn('Không ghi được Score:', err);
-  }
+    const p = new URLSearchParams({ action:'saveScore', email, ...scoreObj });
+    await fetch(`${APPS_SCRIPT_URL}?${p}&t=${Date.now()}`);
+  } catch (err) {}
 }
 
 // Session ID được set khi giảng viên tạo hoặc học viên chọn
@@ -739,14 +742,10 @@ let SESSION_NAME = '';
 async function createSessionOnSheet(sessionId, sessionName) {
   if (!APPS_SCRIPT_URL) return false;
   try {
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'createSession', sessionId, sessionName })
-    });
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=createSession&sessionId=${encodeURIComponent(sessionId)}&sessionName=${encodeURIComponent(sessionName)}&t=${Date.now()}`);
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('Không tạo được session:', err);
     return false;
   }
 }
@@ -777,13 +776,8 @@ function selectSession(id, name) {
 async function postAnswer(questionIdx, answerIdx) {
   if (!APPS_SCRIPT_URL) return;
   try {
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'saveAnswer', session: SESSION_ID, questionIdx, email: currentPlayer, answerIdx })
-    });
-  } catch (err) {
-    console.warn('Không lưu được câu trả lời:', err);
-  }
+    await fetch(`${APPS_SCRIPT_URL}?action=saveAnswer&session=${encodeURIComponent(SESSION_ID)}&q=${questionIdx}&email=${encodeURIComponent(currentPlayer)}&ans=${answerIdx}&t=${Date.now()}`);
+  } catch (err) {}
 }
 
 async function fetchQuestionStats(questionIdx) {
@@ -1173,7 +1167,7 @@ async function showStats(chosen){
   document.getElementById('your-pick').innerHTML=
     chosen>=0?`Bạn chọn: <strong>${q.a[chosen]}</strong>`:'⏰ Hết giờ — bạn không kịp chọn';
   const isLast=(current+1>=questions.length);
-  document.getElementById('btn-next').textContent=isLast?'Xem kết quả ðŸ†':'Câu tiếp theo ▶';
+  document.getElementById('btn-next').textContent=isLast?'Xem kết quả 🏆':'Câu tiếp theo ▶';
   document.getElementById('stat-bars').innerHTML='<div style="text-align:center;color:#6B7F79;padding:16px;font-size:14px">Đang tải kết quả lớp...</div>';
 
   // Render review panel
@@ -1181,7 +1175,7 @@ async function showStats(chosen){
   document.getElementById('review-answers').innerHTML=q.a.map((ans,i)=>{
     const isChosen=i===chosen;
     const cls=isChosen?'chosen':'neutral';
-    return `<div class="review-ans ${cls}">${ICONS[i]} ${ans}${isChosen?' â† bạn chọn':''}</div>`;
+    return `<div class="review-ans ${cls}">${ICONS[i]} ${ans}${isChosen?' ← bạn chọn':''}</div>`;
   }).join('');
 
   document.getElementById('stats-overlay').classList.add('show');

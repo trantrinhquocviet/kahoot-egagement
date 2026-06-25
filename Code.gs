@@ -292,6 +292,30 @@ function doGet(e) {
       }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+  if (e.parameter.action === "saveAnswer") {
+    saveAnswer(e.parameter.session, e.parameter.q, e.parameter.email, e.parameter.ans);
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  if (e.parameter.action === "saveScore") {
+    const scoreObj = {
+      data: Number(e.parameter.data)||0,
+      biz: Number(e.parameter.biz)||0,
+      eng: Number(e.parameter.eng)||0,
+      creative: Number(e.parameter.creative)||0
+    };
+    saveScore(e.parameter.email, scoreObj);
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  if (e.parameter.action === "createSession") {
+    createSession(e.parameter.sessionId, e.parameter.sessionName);
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   return ContentService
     .createTextOutput(JSON.stringify({ status: "ok" }))
     .setMimeType(ContentService.MimeType.JSON);
