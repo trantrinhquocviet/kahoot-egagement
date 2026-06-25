@@ -125,20 +125,43 @@ function setGameState(state, session) {
   if (!foundSession) configSheet.appendRow(["game_session", session || ""]);
 }
 
-// ── Cờ kích hoạt buổi học ──
-function setSessionActive(active) {
-  const sheet = getOrCreateSheet("Active", ["Active", "Updated At"], "#7C3AED");
-  if (sheet.getLastRow() > 1) sheet.deleteRows(2, sheet.getLastRow() - 1);
+// ── Quản lý Sessions ──
+function createSession(sessionId, sessionName) {
+  const sheet = getOrCreateSheet("Sessions", ["Session ID", "Session Name", "Created At", "Status"], "#ea580c");
+  const data = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(sessionId)) {
+      sheet.getRange(i + 1, 2).setValue(sessionName);
+      sheet.getRange(i + 1, 4).setValue("active");
+      return;
+    }
+  }
   const timestamp = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
-  sheet.appendRow([active ? "true" : "false", timestamp]);
+  sheet.appendRow([sessionId, sessionName, timestamp, "active"]);
 }
 
-function getSessionActive() {
+function getActiveSessions() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName("Active");
-  if (!sheet || sheet.getLastRow() < 2) return false;
-  return String(sheet.getRange(2, 1).getValue()).trim().toLowerCase() === "true";
+  const sheet = ss.getSheetByName("Sessions");
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues();
+  return rows
+    .filter(r => String(r[3]).toLowerCase() === "active" && String(r[0]))
+    .map(r => ({ id: String(r[0]), name: String(r[1]), createdAt: String(r[2]) }));
 }
+
+function endSession(sessionId) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Sessions");
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const data = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(sessionId)) {
+      sheet.getRange(i + 1, 4).setValue("ended");
+    }
+  }
+}
+
 
 // ── Web App endpoint ──
 function doPost(e) {
@@ -155,8 +178,10 @@ function doPost(e) {
       checkInLobby(data.session, data.email);
     } else if (data.action === "setGameState") {
       setGameState(data.state, data.session);
-    } else if (data.action === "setSessionActive") {
-      setSessionActive(data.active);
+    } else if (data.action === "createSession") {
+      createSession(data.sessionId, data.sessionName);
+    } else if (data.action === "endSession") {
+      endSession(data.sessionId);
     }
 
     return ContentService
@@ -219,11 +244,6 @@ function getScores() {
 }
 
 function doGet(e) {
-  if (e.parameter.action === "getSessionActive") {
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: true, active: getSessionActive() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
   if (e.parameter.action === "getAccounts") {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName("Account");
@@ -252,6 +272,11 @@ function doGet(e) {
   if (e.parameter.action === "getLobbyState") {
     return ContentService
       .createTextOutput(JSON.stringify({ success: true, ...getLobbyState(e.parameter.session) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  if (e.parameter.action === "getActiveSessions") {
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true, sessions: getActiveSessions() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
   if (e.parameter.action === "getScores") {
