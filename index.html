@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Career Quest 🎯</title>
+<title>AI Career Quest</title>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
 
@@ -22,7 +23,7 @@
   .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px}
   @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-  /* ── ADMIN SCREEN ── */
+  /* â”€â”€ ADMIN SCREEN â”€â”€ */
   .admin-card{
     background:rgba(255,255,255,.07);backdrop-filter:blur(12px);
     border:1px solid rgba(255,255,255,.15);border-radius:20px;
@@ -101,13 +102,13 @@
   .pin-error{font-size:12px;color:#ff6b6b;margin-top:6px;min-height:16px}
   .admin-body{display:none}
 
-  /* ── LOGIN SCREEN ── */
+  /* â”€â”€ LOGIN SCREEN â”€â”€ */
   .login-card{
     background:rgba(255,255,255,.07);backdrop-filter:blur(12px);
     border:1px solid rgba(255,255,255,.15);border-radius:20px;
     padding:40px 36px;width:100%;max-width:440px;text-align:center;
   }
-  .login-logo{font-size:56px;margin-bottom:12px;animation:bounce 1.8s infinite}
+  .login-logo{margin-bottom:12px;animation:bounce 1.8s infinite;color:var(--dua-green,#16A34A)}
   @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
   .login-title{font-size:26px;font-weight:900;margin-bottom:6px}
   .login-sub{font-size:14px;color:#aaa;margin-bottom:28px}
@@ -133,8 +134,8 @@
   }
   .btn-login:hover{transform:scale(1.03)}
 
-  /* ── START SCREEN ── */
-  .start-logo{font-size:72px;margin-bottom:8px;animation:bounce 1.6s infinite}
+  /* â”€â”€ START SCREEN â”€â”€ */
+  .start-logo{margin-bottom:8px;animation:bounce 1.6s infinite}
   .start-title{font-size:52px;font-weight:900;background:linear-gradient(90deg,#ff6ec7,#ffd700,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;line-height:1.1}
   .start-sub{font-size:20px;color:#ccc;margin:12px 0 8px;text-align:center}
   .start-name{font-size:18px;color:#a5b4fc;margin-bottom:24px;font-weight:700}
@@ -147,7 +148,7 @@
   }
   .btn-start:hover{transform:scale(1.06);box-shadow:0 10px 32px rgba(168,85,247,.7)}
 
-  /* ── QUIZ SCREEN ── */
+  /* â”€â”€ QUIZ SCREEN â”€â”€ */
   .quiz-header{width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
   .q-meta{display:flex;flex-direction:column;gap:2px}
   .q-progress{font-size:16px;color:#ccc;font-weight:700}
@@ -177,13 +178,13 @@
   }
   .ans-btn:hover:not(:disabled){transform:translateY(-3px) scale(1.02);filter:brightness(1.12)}
   .ans-btn:disabled{cursor:default}
-  .ans-btn .icon{font-size:26px;flex-shrink:0}
+  .ans-btn .icon{width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2);border-radius:6px;font-size:15px;font-weight:900;letter-spacing:0}
   .ans-btn.c0{background:linear-gradient(135deg,#e53935,#b71c1c)}
   .ans-btn.c1{background:linear-gradient(135deg,#1e88e5,#0d47a1)}
   .ans-btn.c2{background:linear-gradient(135deg,#fbc02d,#e65100)}
   .ans-btn.c3{background:linear-gradient(135deg,#43a047,#1b5e20)}
 
-  /* ── STATS OVERLAY ── */
+  /* â”€â”€ STATS OVERLAY â”€â”€ */
   #stats-overlay{
     display:none;position:fixed;inset:0;
     background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
@@ -223,7 +224,7 @@
   }
   .btn-next:hover{transform:scale(1.03)}
 
-  /* ── LEADERBOARD ── */
+  /* â”€â”€ LEADERBOARD â”€â”€ */
   .lb-title{font-size:44px;font-weight:900;margin-bottom:8px;background:linear-gradient(90deg,#ffd700,#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
   .lb-card{background:rgba(255,255,255,.08);border-radius:16px;overflow:hidden;width:100%;max-width:540px;margin:20px 0}
   .lb-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
@@ -239,13 +240,13 @@
   }
   .btn-result:hover{transform:scale(1.05)}
 
-  /* ── RESULT SCREEN ── */
+  /* â”€â”€ RESULT SCREEN â”€â”€ */
   .career-card{
     background:rgba(255,255,255,.08);backdrop-filter:blur(12px);
     border:1px solid rgba(255,255,255,.15);border-radius:24px;
     padding:36px;max-width:640px;width:100%;text-align:center;
   }
-  .career-icon{font-size:72px;margin-bottom:12px;animation:bounce 2s infinite}
+  .career-icon{margin-bottom:12px;animation:bounce 2s infinite;color:var(--dua-green,#16A34A)}
   .career-title{font-size:34px;font-weight:900;background:linear-gradient(90deg,#ff6ec7,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
   .career-desc{font-size:17px;color:#ccc;line-height:1.6;margin-bottom:20px}
   .roadmap{background:rgba(0,0,0,.3);border-radius:12px;padding:16px;font-size:15px;color:#80cbc4;line-height:1.8}
@@ -266,10 +267,10 @@
   }
 
 
-  /* ─────────────────────────────────────────────
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
      DUA Edu brand theme override
-     Chỉ đổi giao diện/màu sắc, giữ nguyên luồng code quiz.
-     ───────────────────────────────────────────── */
+     Chá»‰ Ä‘á»•i giao diá»‡n/mÃ u sáº¯c, giá»¯ nguyÃªn luá»“ng code quiz.
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   :root{
     --dua-green:#16A34A;
     --dua-green-2:#22C55E;
@@ -453,7 +454,7 @@
     border-color:#EF4444;
   }
 
-  /* ── LOBBY SCREEN ── */
+  /* â”€â”€ LOBBY SCREEN â”€â”€ */
   .lobby-card{
     background:var(--dua-card);border:1px solid var(--dua-border);
     border-radius:24px;padding:40px 36px;width:100%;max-width:520px;
@@ -468,6 +469,7 @@
     font-size:32px;animation:pulse 1.8s ease-in-out infinite;
   }
   @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.12);opacity:.8}}
+  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
   .lobby-count{font-size:42px;font-weight:900;color:var(--dua-green);margin-bottom:4px}
   .lobby-count-label{font-size:14px;color:var(--dua-muted);margin-bottom:24px}
   .lobby-players{
@@ -537,38 +539,38 @@
 </head>
 <body>
 
-<!-- ══ ADMIN SETUP ══ -->
+<!-- â•â• ADMIN SETUP â•â• -->
 <div id="admin" class="screen">
   <div class="admin-card">
-    <div class="admin-title">⚙️ Thiết lập buổi học</div>
+    <div class="admin-title"><i data-lucide="layout-dashboard" style="width:22px;height:22px;vertical-align:middle;margin-right:8px"></i>Thiáº¿t láº­p buá»•i há»c</div>
 
     <!-- PIN gate -->
     <div id="adminGate">
-      <div class="admin-sub">Nhập mã PIN để tiếp tục.</div>
+      <div class="admin-sub">Nháº­p mÃ£ PIN Ä‘á»ƒ tiáº¿p tá»¥c.</div>
       <div class="pin-row">
-        <input class="pin-input" id="pinInput" type="password" placeholder="••••••"
+        <input class="pin-input" id="pinInput" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢"
                onkeydown="if(event.key==='Enter')checkPin()">
-        <button class="btn-pin" onclick="checkPin()">Xác nhận</button>
+        <button class="btn-pin" onclick="checkPin()">XÃ¡c nháº­n</button>
       </div>
       <div class="pin-error" id="pinError"></div>
     </div>
 
     <!-- Admin body (shown after PIN) -->
     <div class="admin-body" id="adminBody">
-    <div class="admin-sub">Đặt tên buổi học, sau đó upload danh sách email học viên.</div>
+    <div class="admin-sub">Äáº·t tÃªn buá»•i há»c, sau Ä‘Ã³ upload danh sÃ¡ch email há»c viÃªn.</div>
 
     <div class="session-name-wrap">
-      <label class="session-name-label" for="sessionNameInput">📌 Tên buổi học</label>
+      <label class="session-name-label" for="sessionNameInput">TÃªn buá»•i há»c</label>
       <input class="session-name-input" id="sessionNameInput" type="text"
-             placeholder="Ví dụ: Lớp K19 - Buổi 1"
+             placeholder="VÃ­ dá»¥: Lá»›p K19 - Buá»•i 1"
              onkeydown="if(event.key==='Enter')document.getElementById('xlFile').click()">
     </div>
 
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('xlFile').click()">
       <input type="file" id="xlFile" accept=".xlsx,.xls,.csv" onchange="handleFile(this)">
-      <div class="uz-icon">📂</div>
-      <div class="uz-text">Kéo thả hoặc <strong>nhấn để chọn file</strong></div>
-      <div class="uz-hint">Hỗ trợ .xlsx · .xls · .csv — cột email có thể đặt tên tùy ý</div>
+      <div class="uz-icon"><i data-lucide="upload-cloud" style="width:40px;height:40px;stroke:#a855f7"></i></div>
+      <div class="uz-text">KÃ©o tháº£ hoáº·c <strong>nháº¥n Ä‘á»ƒ chá»n file</strong></div>
+      <div class="uz-hint">Há»— trá»£ .xlsx Â· .xls Â· .csv â€” cá»™t email cÃ³ thá»ƒ Ä‘áº·t tÃªn tÃ¹y Ã½</div>
     </div>
 
     <div class="email-preview" id="emailPreview">
@@ -577,81 +579,81 @@
     </div>
 
     <div class="share-box" id="shareBox">
-      <div class="sb-label">🔗 Link chia sẻ cho học viên</div>
+      <div class="sb-label"><i data-lucide="link-2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px"></i>Link chia sáº» cho há»c viÃªn</div>
       <div class="share-url-row">
         <div class="share-url" id="shareUrl"></div>
-        <button class="btn-copy" id="btnCopy" onclick="copyLink()">Sao chép</button>
+        <button class="btn-copy" id="btnCopy" onclick="copyLink()">Sao chÃ©p</button>
       </div>
     </div>
 
     <button class="btn-admin-save" id="btnSave" onclick="saveAndActivate()">
-      ✅ Lưu danh sách &amp; kích hoạt
+      LÆ°u danh sÃ¡ch &amp; kÃ­ch hoáº¡t
     </button>
     <div class="session-status" id="sessionStatus" style="display:none">
-      🟢 Buổi học đang hoạt động — học viên có thể đăng nhập
+      Buá»•i há»c Ä‘ang hoáº¡t Ä‘á»™ng â€” há»c viÃªn cÃ³ thá»ƒ Ä‘Äƒng nháº­p
     </div>
-    <div class="admin-reset" onclick="resetAll()">Xoá danh sách cũ &amp; bắt đầu lại</div>
+    <div class="admin-reset" onclick="resetAll()">XoÃ¡ danh sÃ¡ch cÅ© &amp; báº¯t Ä‘áº§u láº¡i</div>
     <div class="admin-lobby" id="adminLobby">
-      <div class="admin-lobby-title">👥 Học viên đang chờ (<span id="adminLobbyCount">0</span>)</div>
+      <div class="admin-lobby-title"><i data-lucide="users" style="width:14px;height:14px;vertical-align:middle;margin-right:5px"></i>Há»c viÃªn Ä‘ang chá» (<span id="adminLobbyCount">0</span>)</div>
       <div class="admin-lobby-list" id="adminLobbyList"></div>
-      <button class="btn-start-game" onclick="adminStartGame()">🚀 Bắt đầu ngay!</button>
+      <button class="btn-start-game" onclick="adminStartGame()">Báº¯t Ä‘áº§u ngay</button>
     </div>
     </div><!-- /adminBody -->
   </div>
 </div>
 
-<!-- ══ LOGIN ══ -->
+<!-- â•â• LOGIN â•â• -->
 <div id="login" class="screen">
   <div class="login-card">
-    <div class="login-logo">🎯</div>
+    <div class="login-logo"><i data-lucide="target" style="width:52px;height:52px;stroke:var(--dua-green,#16A34A);stroke-width:1.5"></i></div>
     <div class="login-title">AI Career Quest</div>
-    <div class="login-sub">Chọn buổi học và nhập email để tham gia</div>
+    <div class="login-sub">Chá»n buá»•i há»c vÃ  nháº­p email Ä‘á»ƒ tham gia</div>
     <div class="session-selector" id="sessionSelector">
-      <div class="session-selector-label">🗂 Chọn buổi học của bạn:</div>
+      <div class="session-selector-label">Chá»n buá»•i há»c cá»§a báº¡n:</div>
       <div id="sessionList"></div>
     </div>
     <input class="email-input" id="emailInput" type="email" placeholder="email@company.com"
            onkeydown="if(event.key==='Enter')doLogin()">
     <div class="login-error" id="loginError"></div>
-    <button class="btn-login" onclick="doLogin()">Vào chơi 🚀</button>
+    <button class="btn-login" onclick="doLogin()">VÃ o chÆ¡i</button>
   </div>
 </div>
 
-<!-- ══ LOBBY ══ -->
+<!-- â•â• LOBBY â•â• -->
 <div id="lobby" class="screen">
   <div class="lobby-card">
-    <div class="lobby-pulse">⏳</div>
-    <div class="lobby-title">Đang chờ vào lớp...</div>
+    <div class="lobby-pulse"><i data-lucide="loader-2" style="width:32px;height:32px;animation:spin 1.2s linear infinite"></i></div>
+    <div class="lobby-title">Äang chá» vÃ o lá»›p...</div>
     <div class="lobby-session-badge" id="lobbySessionBadge" style="display:none"></div>
     <div class="lobby-sub" id="lobbyEmail"></div>
     <div class="lobby-count" id="lobbyCount">0</div>
-    <div class="lobby-count-label">học viên đã vào</div>
+    <div class="lobby-count-label">há»c viÃªn Ä‘Ã£ vÃ o</div>
     <div class="lobby-players" id="lobbyPlayers">
-      <div class="lobby-waiting">Chưa có ai vào...</div>
+      <div class="lobby-waiting">ChÆ°a cÃ³ ai vÃ o...</div>
     </div>
-    <div style="font-size:13px;color:var(--dua-muted)">Giảng viên sẽ bắt đầu khi đủ người 🎯</div>
+    <div style="font-size:13px;color:var(--dua-muted)">Giáº£ng viÃªn sáº½ báº¯t Ä‘áº§u khi Ä‘á»§ ngÆ°á»i</div>
   </div>
 </div>
 
-<!-- ══ START ══ -->
+<!-- â•â• START â•â• -->
 <div id="start" class="screen">
-  <div class="start-logo">🎯</div>
+  <div class="start-logo"><i data-lucide="target" style="width:68px;height:68px;stroke-width:1.2"></i></div>
   <div class="start-title">AI CAREER QUEST</div>
-  <div class="start-sub">Xin chào,</div>
+  <div class="start-sub">Xin chÃ o,</div>
   <div class="start-name" id="welcomeName"></div>
   <div style="margin-bottom:28px">
-    <span class="pill">💡 21 câu hỏi</span>
-    <span class="pill">⏱ 30 giây / câu</span>
-    <span class="pill">⚡ Tính điểm theo tốc độ</span>
+    <span class="pill">21 cÃ¢u há»i</span>
+    <span class="pill">30 giÃ¢y / cÃ¢u</span>
+    <span class="pill">TÃ­nh Ä‘iá»ƒm theo tá»‘c Ä‘á»™</span>
   </div>
-  <button class="btn-start" onclick="startGame()">🚀 BẮT ĐẦU NGAY</button>
+  <button class="btn-start" onclick="startGame()">Báº®T Äáº¦U NGAY</button>
 </div>
 
-<!-- ══ QUIZ ══ -->
+<!-- â•â• QUIZ â•â• -->
 <div id="quiz" class="screen">
   <div class="quiz-header">
     <div class="q-meta">
-      <div class="q-progress" id="progress">Câu 1/3</div>
+      <div class="q-progress" id="progress">CÃ¢u 1/3</div>
       <div class="q-player" id="qPlayer"></div>
     </div>
     <div class="timer-wrap">
@@ -666,64 +668,72 @@
   <div class="question-card" id="question"></div>
 
   <div class="answers">
-    <button class="ans-btn c0" onclick="answer(0)" id="a0"><span class="icon">🔴</span><span id="t0"></span></button>
-    <button class="ans-btn c1" onclick="answer(1)" id="a1"><span class="icon">🔵</span><span id="t1"></span></button>
-    <button class="ans-btn c2" onclick="answer(2)" id="a2"><span class="icon">🟡</span><span id="t2"></span></button>
-    <button class="ans-btn c3" onclick="answer(3)" id="a3"><span class="icon">🟢</span><span id="t3"></span></button>
+    <button class=”ans-btn c0” onclick=”answer(0)” id=”a0”><span class=”icon”>A</span><span id=”t0”></span></button>
+    <button class=”ans-btn c1” onclick=”answer(1)” id=”a1”><span class=”icon”>B</span><span id=”t1”></span></button>
+    <button class="ans-btn c2" onclick="answer(2)" id="a2"><span class="icon">C</span><span id="t2"></span></button>
+    <button class="ans-btn c3" onclick="answer(3)" id="a3"><span class="icon">D</span><span id="t3"></span></button>
   </div>
 </div>
 
-<!-- ══ STATS OVERLAY ══ -->
+<!-- PART BREAK OVERLAY -->
+<div id="part-break" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:20px;text-align:center;padding:32px">
+  <div style="font-size:13px;font-weight:800;letter-spacing:3px;color:var(--dua-green,#16A34A);text-transform:uppercase">Hoàn thành Phần 1</div>
+  <div style="font-size:36px;font-weight:900;color:#fff;line-height:1.2">Phần 2<br><span style="font-size:18px;color:#ccc;font-weight:700">Storytelling & Dashboard Design</span></div>
+  <div style="font-size:14px;color:#aaa;max-width:380px;line-height:1.6">Phần này kiểm tra khả năng trình bày dữ liệu — màu sắc, bố cục, và cách kể chuyện bằng số liệu.</div>
+  <button onclick="startPart2()" style="margin-top:8px;padding:14px 48px;font-size:17px;font-weight:900;background:linear-gradient(135deg,#16A34A,#0EA5A4);border:none;border-radius:14px;color:#fff;cursor:pointer;box-shadow:0 8px 24px rgba(22,163,74,.35)">Tiếp tục Phần 2</button>
+</div>
+
+<!-- â•â• STATS OVERLAY â•â• -->
 <div id="stats-overlay">
   <div class="stats-box">
     <div class="stats-tabs">
-      <div class="stats-tab active" id="tab-stats" onclick="switchStatsTab('stats')">📊 Thống kê lớp</div>
-      <div class="stats-tab" id="tab-review" onclick="switchStatsTab('review')">📋 Xem lại câu hỏi</div>
+      <div class="stats-tab active" id="tab-stats" onclick="switchStatsTab('stats')">Thá»‘ng kÃª lá»›p</div>
+      <div class="stats-tab" id="tab-review" onclick="switchStatsTab('review')">Xem láº¡i cÃ¢u há»i</div>
     </div>
-    <!-- Panel thống kê -->
+    <!-- Panel thá»‘ng kÃª -->
     <div class="stats-panel active" id="panel-stats">
       <div class="your-pick" id="your-pick"></div>
       <div id="stat-bars"></div>
     </div>
-    <!-- Panel xem lại câu hỏi -->
+    <!-- Panel xem láº¡i cÃ¢u há»i -->
     <div class="stats-panel" id="panel-review">
       <div class="review-q" id="review-question"></div>
       <div id="review-answers"></div>
     </div>
-    <button class="btn-next" id="btn-next" onclick="continueAfterStats()">Câu tiếp theo ▶</button>
+    <button class="btn-next" id="btn-next" onclick="continueAfterStats()">CÃ¢u tiáº¿p theo â–¶</button>
   </div>
 </div>
 
-<!-- ══ LEADERBOARD ══ -->
+<!-- â•â• LEADERBOARD â•â• -->
 <div id="leaderboard" class="screen">
-  <div class="lb-title">🏆 LEADERBOARD</div>
-  <div style="font-size:18px;font-weight:700;color:#6B7F79;margin-bottom:4px">Điểm của bạn: <span id="scoreShow" style="color:#16A34A;font-size:22px">0</span></div>
+  <div class="lb-title">LEADERBOARD</div>
+  <div style="font-size:18px;font-weight:700;color:#6B7F79;margin-bottom:4px">Äiá»ƒm cá»§a báº¡n: <span id="scoreShow" style="color:#16A34A;font-size:22px">0</span></div>
   <div class="lb-card" id="lbCard">
-    <div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Đang tải...</div>
+    <div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Äang táº£i...</div>
   </div>
-  <button class="btn-result" onclick="showResult()">Xem nghề phù hợp ✨</button>
+  <button class="btn-result" onclick="showResult()">Xem nghá» phÃ¹ há»£p</button>
 </div>
 
-<!-- ══ RESULT ══ -->
+<!-- â•â• RESULT â•â• -->
 <div id="result" class="screen">
   <div class="career-card">
     <div class="career-icon" id="careerIcon"></div>
     <div class="career-title" id="careerTitle"></div>
     <div class="career-desc" id="careerDesc"></div>
     <div class="roadmap">
-      <strong>Roadmap đề xuất:</strong><br>
-      SQL → Power BI → Python → AI Agent → Automation
+      <strong>Roadmap Ä‘á» xuáº¥t:</strong><br>
+      SQL â†’ Power BI â†’ Python â†’ AI Agent â†’ Automation
     </div>
-    <button class="btn-replay" onclick="goReplay()">🔄 Chơi lại</button>
+    <button class="btn-replay" onclick="goReplay()">ChÆ¡i láº¡i</button>
   </div>
 </div>
 
 <script>
-// ── Constants ──
-const ICONS=['🔴','🔵','🟡','🟢'];
+// â”€â”€ Constants â”€â”€
+const ICONS=['A','B','C','D'];
 const COLORS=['#F97316','#0EA5A4','#EAB308','#22C55E'];
 const LS_KEY='quiz_email_list';
-const ADMIN_PIN='onpoint2024'; // đổi PIN tại đây
+const ADMIN_PIN='onpoint2024'; // Ä‘á»•i PIN táº¡i Ä‘Ã¢y
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0Ep4qw-Z_FSq0uU8Ns8QeGpqVxC_ZmJiV4ouZ5f57l6Aar33mVUxIRvW5jMge7Rn8/exec';
 
 async function logImportToSheet(emails) {
@@ -736,7 +746,7 @@ async function logImportToSheet(emails) {
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('Không ghi được Account:', err);
+    console.warn('KhÃ´ng ghi Ä‘Æ°á»£c Account:', err);
     return false;
   }
 }
@@ -751,7 +761,7 @@ async function setSessionActiveFlag(active) {
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('Không ghi được Active flag:', err);
+    console.warn('KhÃ´ng ghi Ä‘Æ°á»£c Active flag:', err);
     return false;
   }
 }
@@ -764,11 +774,11 @@ async function saveScoreToSheet(email, scoreObj) {
       body: JSON.stringify({ action: 'saveScore', email, score: scoreObj })
     });
   } catch (err) {
-    console.warn('Không ghi được Score:', err);
+    console.warn('KhÃ´ng ghi Ä‘Æ°á»£c Score:', err);
   }
 }
 
-// Session ID được set khi giảng viên tạo hoặc học viên chọn
+// Session ID Ä‘Æ°á»£c set khi giáº£ng viÃªn táº¡o hoáº·c há»c viÃªn chá»n
 let SESSION_ID = '';
 let SESSION_NAME = '';
 
@@ -782,7 +792,7 @@ async function createSessionOnSheet(sessionId, sessionName) {
     const json = await res.json();
     return json.success !== false;
   } catch (err) {
-    console.warn('Không tạo được session:', err);
+    console.warn('KhÃ´ng táº¡o Ä‘Æ°á»£c session:', err);
     return false;
   }
 }
@@ -823,7 +833,7 @@ async function postAnswer(questionIdx, answerIdx) {
       body: JSON.stringify({ action: 'saveAnswer', session: SESSION_ID, questionIdx, email: currentPlayer, answerIdx })
     });
   } catch (err) {
-    console.warn('Không lưu được câu trả lời:', err);
+    console.warn('KhÃ´ng lÆ°u Ä‘Æ°á»£c cÃ¢u tráº£ lá»i:', err);
   }
 }
 
@@ -834,7 +844,7 @@ async function fetchQuestionStats(questionIdx) {
     const json = await res.json();
     return json.votes || null;
   } catch (err) {
-    console.warn('Không lấy được stats:', err);
+    console.warn('KhÃ´ng láº¥y Ä‘Æ°á»£c stats:', err);
     return null;
   }
 }
@@ -846,39 +856,49 @@ async function fetchLeaderboard() {
     const json = await res.json();
     return json.scores || [];
   } catch (err) {
-    console.warn('Không lấy được leaderboard:', err);
+    console.warn('KhÃ´ng láº¥y Ä‘Æ°á»£c leaderboard:', err);
     return [];
   }
 }
 
+const PART1_COUNT = 20;
 const questions=[
-  {q:"Bạn thích công việc nào nhất?",a:["Phân tích dữ liệu","Điều phối dự án","Lập trình AI","Sáng tạo nội dung"],t:["data","biz","eng","creative"]},
-  {q:"Công ty mất tiền do hoàn hàng nhiều, bạn sẽ làm gì?",a:["Phân tích KPI hoàn hàng","Họp các stakeholder","Xây fraud detector AI","Thiết kế lại quy trình"],t:["data","biz","eng","creative"]},
-  {q:"Công cụ nào bạn muốn học nhất?",a:["Power BI","Jira / Notion","Python / LangChain","ChatGPT / Midjourney"],t:["data","biz","eng","creative"]},
+  // PHAN 1: Phan tich chi so & bieu do
+  {q:"CTR (Click-through Rate) duoc tinh bang cong thuc nao?",a:["Clicks / Impressions × 100","Conversions / Clicks × 100","Revenue / Clicks","Sessions / Users × 100"],t:["data","biz","eng","creative"]},
+  {q:"Conversion Rate trong e-commerce do luong dieu gi?",a:["Tỷ lệ lượt truy cập chuyển thành đơn hàng","Tỷ lệ sản phẩm tồn kho bán được","Chi phí QC / Doanh thu","Số KH mới / Tổng KH"],t:["data","biz","creative","eng"]},
+  {q:"CAC (Customer Acquisition Cost) được tính như thế nào?",a:["Tổng chi phí marketing & sales / Số KH mới","Doanh thu / Số KH","Chi phí vận hành / Tổng đơn","Lợi nhuận / Chi phí đầu tư"],t:["data","biz","eng","creative"]},
+  {q:"LTV (Customer Lifetime Value) thể hiện điều gì?",a:["Tổng doanh thu kỳ vọng từ 1 KH trong suốt vòng đời","Số lần mua TB của 1 KH","Chi phí giữ chân KH","Thời gian TB giữ KH"],t:["data","biz","creative","eng"]},
+  {q:"ROI (Return on Investment) được tính như thế nào?",a:["(Lợi nhuận – Chi phí đầu tư) / Chi phí đầu tư × 100","Doanh thu / Chi phí","Lợi nhuận / Doanh thu","Chi phí / Số lượng SP"],t:["data","biz","eng","creative"]},
+  {q:"ROAS = 5 có nghĩa là gì?",a:["Mỗi 1đ chi QC thu về 5đ doanh thu","Lợi nhuận gấp 5 lần chi phí","Chi phí QC chiếm 5% doanh thu","Số đơn tăng 5 lần"],t:["data","biz","creative","eng"]},
+  {q:"Trong fintech & banking, NPL Ratio đo lường điều gì?",a:["Tỷ lệ nợ xấu trên tổng dư nợ cho vay","Lợi nhuận ròng trên tổng tài sản","Doanh thu phí / Tổng doanh thu","Tỷ lệ KH vay mới"],t:["data","biz","eng","creative"]},
+  {q:"CASA Ratio cao trong banking thể hiện điều gì?",a:["Ngân hàng có nguồn vốn giá rẻ, biên lãi suất tốt hơn","Ngân hàng đang gặp khó về thanh khoản","Tỷ lệ nợ xấu cao","KH mới tăng mạnh"],t:["data","biz","creative","eng"]},
+  {q:"GMV (Gross Merchandise Value) trong e-commerce là?",a:["Tổng giá trị hàng hóa giao dịch qua nền tảng","Lợi nhuận gộp của sàn","Chi phí logistics","Doanh thu từ phí hoa hồng"],t:["data","biz","eng","creative"]},
+  {q:"ARPU (Average Revenue Per User) được tính bằng?",a:["Tổng doanh thu / Số người dùng hoạt động","Tổng doanh thu / Số đơn hàng","Lợi nhuận / Số KH","Doanh thu QC / Lượt xem"],t:["data","biz","creative","eng"]},
+  {q:"Bounce Rate trong website analytics là gì?",a:["Tỷ lệ người thoát ngay sau khi xem 1 trang duy nhất","Tốc độ tải trang TB","Số lần người dùng quay lại","Tỷ lệ trang bị lỗi"],t:["data","eng","biz","creative"]},
+  {q:"Churn Rate trong SaaS/fintech được tính như thế nào?",a:["Số KH rời đi trong kỳ / Số KH đầu kỳ × 100","Số KH mới / Tổng KH","Doanh thu mất đi / Tổng DT","Chi phí giữ chân / Số KH ở lại"],t:["data","biz","creative","eng"]},
+  {q:"DAU/MAU ratio trong app mobile đo lường điều gì?",a:["Mức độ gắn kết (stickiness) người dùng hàng ngày","Số người dùng mới mỗi ngày","Doanh thu trên mỗi người dùng","Tỷ lệ giữ chân sau 30 ngày"],t:["data","eng","biz","creative"]},
+  {q:"NPS (Net Promoter Score) dùng để đo lường điều gì?",a:["Mức độ KH sẵn sàng giới thiệu sản phẩm","Tỷ lệ hoàn hàng","Thời gian xử lý đơn hàng","Tốc độ tải trang"],t:["data","biz","eng","creative"]},
+  {q:"Biểu đồ nào phù hợp nhất để theo dõi xu hướng doanh thu theo tháng?",a:["Line chart (biểu đồ đường)","Pie chart (biểu đồ tròn)","Scatter plot","Treemap"],t:["data","creative","eng","biz"]},
+  {q:"Pie chart phù hợp nhất khi nào?",a:["So sánh tỷ lệ % của tối đa 5-6 phần trong tổng thể","So sánh xu hướng theo thời gian","Phân tích phân phối dữ liệu","So sánh nhiều danh mục cùng lúc"],t:["data","creative","eng","biz"]},
+  {q:"Scatter plot (biểu đồ phân tán) được dùng để làm gì?",a:["Tìm mối tương quan giữa 2 biến số","So sánh tỷ lệ phần trăm","Hiển thị xu hướng theo thời gian","Phân tích cơ cấu thành phần"],t:["data","biz","creative","eng"]},
+  {q:"Biểu đồ Waterfall (thác nước) thường dùng để phân tích gì?",a:["Sự thay đổi từng bước — lãi/lỗ, tăng/giảm theo yếu tố","So sánh xu hướng theo thời gian","Tìm tương quan giữa 2 biến","Phân phối dữ liệu theo nhóm"],t:["data","biz","eng","creative"]},
+  {q:"Khi doanh thu tăng nhưng lợi nhuận giảm, bước phân tích tiếp theo nên là?",a:["Phân tích cơ cấu chi phí — xem chi phí nào tăng bất thường","Tăng giá bán ngay","Giảm ngân sách marketing","Mở rộng thêm SP mới"],t:["data","biz","creative","eng"]},
+  {q:"Khi nhìn vào biểu đồ cột, cột cao nhất đồng nghĩa với điều gì?",a:["Giá trị lớn nhất theo trục Y — cần xét context để kết luận tốt hay xấu","Luôn là hiệu suất tốt nhất","Cần cải thiện ngay","Không có ý nghĩa gì"],t:["data","biz","creative","eng"]},
 
-  // ── Data Entry Level 1 ──
-  {q:"SQL dùng để làm gì?",a:["Truy vấn & xử lý dữ liệu từ database","Thiết kế giao diện web","Vẽ biểu đồ tự động","Gửi email hàng loạt"],t:["data","creative","biz","eng"]},
-  {q:"Bạn có 1 triệu dòng dữ liệu bán hàng. Bước đầu tiên bạn làm gì?",a:["Làm sạch & kiểm tra dữ liệu null","Làm dashboard ngay","Chạy mô hình AI luôn","Gửi report cho sếp"],t:["data","biz","eng","creative"]},
-  {q:"KPI nào quan trọng nhất để đo hiệu quả bán hàng trên Shopee?",a:["Conversion Rate & GMV","Số lượng follower shop","Số lần livestream","Độ dài mô tả sản phẩm"],t:["data","creative","biz","eng"]},
-  {q:"Sếp hỏi: 'Tháng này doanh thu giảm, tại sao?' — bạn làm gì đầu tiên?",a:["Drill down theo kênh / SKU / thời gian","Trả lời ngay theo cảm tính","Chờ phòng khác báo cáo","Đổ lỗi cho thị trường"],t:["data","creative","biz","eng"]},
-  {q:"Pivot Table trong Excel dùng để làm gì?",a:["Tổng hợp & phân tích dữ liệu nhanh","Vẽ hình minh họa","Gửi email tự động","Kết nối API"],t:["data","creative","eng","biz"]},
-  {q:"Data Analyst khác Data Scientist ở điểm nào chính?",a:["Analyst tập trung insight hiện tại; Scientist xây mô hình dự báo","Analyst code nhiều hơn","Data Scientist chỉ dùng Excel","Không có sự khác biệt"],t:["data","eng","creative","biz"]},
-  {q:"Bạn muốn bắt đầu học data từ đâu?",a:["SQL + Excel cơ bản","Python ngay từ đầu","Power BI luôn","Chưa biết bắt đầu từ đâu"],t:["data","eng","biz","creative"]},
-  {q:"Dashboard tốt cần có yếu tố gì quan trọng nhất?",a:["Insight rõ ràng, dễ ra quyết định","Màu sắc đẹp bắt mắt","Càng nhiều biểu đồ càng tốt","Dùng được trên mọi thiết bị"],t:["data","creative","biz","eng"]},
-  {q:"Trong e-commerce, 'churn rate' có nghĩa là gì?",a:["Tỷ lệ khách hàng rời bỏ / không mua lại","Tốc độ giao hàng trung bình","Chi phí quảng cáo mỗi đơn","Tỷ lệ hoàn hàng"],t:["data","biz","eng","creative"]},
-
-  // ── Career Roadmap & Salary ──
-  {q:"Lộ trình học Data chuẩn nhất cho người mới bắt đầu là gì?",a:["Excel → SQL → Power BI → Python","Python → AI → SQL → Excel","Power BI → Python → SQL → Excel","AI → SQL → Excel → Power BI"],t:["data","eng","biz","creative"]},
-  {q:"Sau bao lâu học data, bạn có thể đi làm được (fresher)?",a:["3 – 6 tháng nếu học đúng hướng","Cần ít nhất 2 năm","Phải có bằng đại học IT","Không cần học, tự học trên YouTube đủ rồi"],t:["data","biz","creative","eng"]},
-  {q:"Mức lương fresher Data Analyst tại Việt Nam thường là bao nhiêu?",a:["8 – 15 triệu VND/tháng","2 – 4 triệu VND/tháng","30 – 50 triệu VND/tháng","Dưới 5 triệu VND/tháng"],t:["data","creative","biz","eng"]},
-  {q:"Data Analyst có 2–3 năm kinh nghiệm tại TP.HCM có thể kỳ vọng mức lương khoảng bao nhiêu?",a:["18 – 30 triệu VND/tháng","5 – 8 triệu VND/tháng","50 – 80 triệu VND/tháng","Giống fresher, không tăng nhiều"],t:["data","creative","biz","eng"]},
-  {q:"Sau vị trí Data Analyst, bước thăng tiến tiếp theo thường là gì?",a:["Senior Analyst → Data Lead / Analytics Manager","Chuyển sang làm kế toán","Về làm nông nghiệp","Mãi là Analyst không lên được"],t:["data","biz","creative","eng"]},
-  {q:"Kỹ năng nào giúp Data Analyst tăng lương nhanh nhất?",a:["SQL nâng cao + Python + kể chuyện bằng data","Biết nhiều phần mềm văn phòng","Có nhiều chứng chỉ online","Làm thêm giờ nhiều hơn"],t:["data","biz","creative","eng"]},
-  {q:"Ngành nào tại Việt Nam đang trả lương cao nhất cho Data Analyst?",a:["Fintech / Banking / E-commerce","Giáo dục truyền thống","Nhà hàng & F&B","Dệt may & sản xuất"],t:["data","biz","eng","creative"]},
-  {q:"Data Scientist tại Việt Nam có thể kiếm được bao nhiêu sau 3–5 năm kinh nghiệm?",a:["40 – 80 triệu VND/tháng","10 – 12 triệu VND/tháng","Dưới 20 triệu VND/tháng","Không có nhu cầu tuyển dụng ở VN"],t:["data","creative","biz","eng"]}
+  // PHAN 2: Storytelling & dashboard
+  {q:"Nguyên tắc quan trọng nhất khi thiết kế dashboard là gì?",a:["Người đọc hiểu insight chính trong vòng 5 giây đầu","Càng nhiều biểu đồ càng tốt","Dùng nhiều màu sắc để nổi bật","Hiển thị toàn bộ dữ liệu có sẵn"],t:["data","creative","biz","eng"]},
+  {q:"Màu sắc trong dashboard nên được dùng theo nguyên tắc nào?",a:["Màu nhấn chỉ dùng cho 1 điểm quan trọng nhất, còn lại dùng màu trung tính","Mỗi cột một màu khác nhau","Dùng tông màu neon để dễ nhìn","Màu sắc không quan trọng"],t:["data","creative","biz","eng"]},
+  {q:"\"Sum of SALES by Year\" là ví dụ về lỗi gì trong tiêu đề biểu đồ?",a:["Tiêu đề máy móc từ tool, không truyền insight — phải đổi thành câu kể chuyện","Tiêu đề quá dài","Thiếu đơn vị đo","Font chữ không phù hợp"],t:["data","creative","biz","eng"]},
+  {q:"Khi muốn nhấn mạnh 1 cột quan trọng trong biểu đồ cột, nên làm gì?",a:["Đổi màu nổi duy nhất cột đó, các cột còn lại để màu xám nhạt","Tô tất cả cột cùng màu sặc sỡ","Thêm border đỏ quanh biểu đồ","Tăng font toàn bộ"],t:["data","creative","biz","eng"]},
+  {q:"Bố cục dashboard chuẩn nên đặt KPI tổng quan ở đâu?",a:["Hàng đầu tiên — người đọc quét từ trên xuống, trái sang phải","Góc dưới phải","Giữa trang","Cuối trang để dẫn dắt người đọc"],t:["data","biz","creative","eng"]},
+  {q:"Insight tốt trong data storytelling cần yếu tố gì?",a:["Trả lời được câu hỏi 'So what?' — tại sao con số này quan trọng","Liệt kê đầy đủ tất cả số liệu","Dùng càng nhiều từ chuyên môn càng tốt","Hiển thị dữ liệu thô không qua xử lý"],t:["data","biz","creative","eng"]},
+  {q:"Khi dữ liệu có quá nhiều yếu tố gây nhiễu, nên xử lý như thế nào?",a:["Lọc và chỉ giữ yếu tố liên kết chặt chẽ với insight cần truyền tải","Hiển thị tất cả để người đọc tự rút ra kết luận","Xóa hết và làm lại từ đầu","Thêm chú thích dài để giải thích từng điểm"],t:["data","biz","creative","eng"]},
+  {q:"Bố cục dashboard nên ưu tiên sắp xếp thông tin theo thứ tự nào?",a:["Tổng quan → Chi tiết → Nguyên nhân → Hành động","Chi tiết trước để có dữ liệu nền","Nguyên nhân trước để giải thích xu hướng","Hành động trước để người đọc biết việc cần làm"],t:["data","biz","creative","eng"]},
+  {q:"Khi so sánh 2 nhóm dữ liệu theo thời gian, liên kết màu sắc nên như thế nào?",a:["Mỗi nhóm 1 màu xuyên suốt — nhất quán để người đọc không bị nhầm","Dùng màu ngẫu nhiên cho sinh động","Đổi màu theo từng tháng để phân biệt","Chỉ dùng 1 màu cho cả 2 nhóm"],t:["data","creative","biz","eng"]},
+  {q:"Tiêu đề biểu đồ hiệu quả nhất là gì trong các lựa chọn sau?",a:["'Doanh thu Q4/2024 tăng 32% — cao nhất trong 3 năm'","'Revenue Chart'","'Sum of Revenue by Quarter'","'Biểu đồ doanh thu'"],t:["data","creative","biz","eng"]}
 ];
 
-// ── State ──
+// â”€â”€ State â”€â”€
 let emailList=[];      // normalised lowercase emails
 let currentPlayer=''; // email of logged-in student
 let score={data:0,biz:0,eng:0,creative:0};
@@ -894,11 +914,11 @@ async function enterLobby(email) {
   // Show session name badge in lobby
   const badge = document.getElementById('lobbySessionBadge');
   if (SESSION_NAME) {
-    badge.textContent = '📚 ' + SESSION_NAME;
+    badge.textContent = 'ðŸ“š ' + SESSION_NAME;
     badge.style.display = 'inline-block';
   }
   show('lobby');
-  // Check-in vào sheet
+  // Check-in vÃ o sheet
   if (APPS_SCRIPT_URL) {
     try {
       const url = `${APPS_SCRIPT_URL}?action=checkIn&session=${encodeURIComponent(SESSION_ID)}&email=${encodeURIComponent(email)}&t=${Date.now()}`;
@@ -906,10 +926,10 @@ async function enterLobby(email) {
       const json = await res.json();
       console.log('[checkIn]', json, 'session:', SESSION_ID);
     } catch(e) {
-      console.error('[checkIn] lỗi:', e);
+      console.error('[checkIn] lá»—i:', e);
     }
   }
-  // Bắt đầu poll — jitter để tránh spike đồng thời khi nhiều học sinh cùng vào
+  // Báº¯t Ä‘áº§u poll â€” jitter Ä‘á»ƒ trÃ¡nh spike Ä‘á»“ng thá»i khi nhiá»u há»c sinh cÃ¹ng vÃ o
   const jitter = Math.random() * 2000;
   setTimeout(() => {
     pollLobby();
@@ -924,32 +944,32 @@ async function pollLobby() {
     const json = await res.json();
     console.log('[pollLobby]', json);
 
-    // Cập nhật UI lobby
+    // Cáº­p nháº­t UI lobby
     const players = json.players || [];
     document.getElementById('lobbyCount').textContent = players.length;
     if (players.length > 0) {
       document.getElementById('lobbyPlayers').innerHTML = players
-        .map(p => `<div class="lobby-player-row">✅ ${p}</div>`).join('');
+        .map(p => `<div class="lobby-player-row">${p}</div>`).join('');
     }
 
-    // Nếu game đã start và session khớp → vào quiz
+    // Náº¿u game Ä‘Ã£ start vÃ  session khá»›p â†’ vÃ o quiz
     if (json.state === 'started') {
       clearInterval(lobbyPollInterval);
       startGame();
     }
   } catch(e) {
-    console.error('[pollLobby] lỗi:', e);
+    console.error('[pollLobby] lá»—i:', e);
   }
 }
 
-// ── Boot ──
+// â”€â”€ Boot â”€â”€
 (function init(){
   const isAdmin=location.search.includes('admin');
   if(isAdmin){
     show('admin');
     if(sessionStorage.getItem('admin_ok')){
       unlockAdmin();
-      // Khôi phục session ID và tên session đã lưu
+      // KhÃ´i phá»¥c session ID vÃ  tÃªn session Ä‘Ã£ lÆ°u
       const storedSessionId = localStorage.getItem('admin_session_id');
       const storedSessionName = localStorage.getItem('admin_session_name');
       if (storedSessionId) {
@@ -964,10 +984,10 @@ async function pollLobby() {
         showShareBox();
         const btn=document.getElementById('btnSave');
         btn.classList.add('ready');
-        btn.innerHTML=`🔄 Dùng lại ${emailList.length} email đã lưu &amp; kích hoạt`;
+        btn.innerHTML=`ðŸ”„ DÃ¹ng láº¡i ${emailList.length} email Ä‘Ã£ lÆ°u &amp; kÃ­ch hoáº¡t`;
         document.getElementById('adminLobby').style.display='block';
         if (SESSION_NAME) {
-          document.getElementById('sessionStatus').textContent = `🟢 "${SESSION_NAME}" đang hoạt động — học viên có thể đăng nhập`;
+          document.getElementById('sessionStatus').textContent = `ðŸŸ¢ "${SESSION_NAME}" Ä‘ang hoáº¡t Ä‘á»™ng â€” há»c viÃªn cÃ³ thá»ƒ Ä‘Äƒng nháº­p`;
           document.getElementById('sessionStatus').style.display = 'block';
         }
         setInterval(pollAdminLobby, 5000);
@@ -976,14 +996,15 @@ async function pollLobby() {
       }
     }
   } else {
-    // Học viên: fetch danh sách email từ sheet (không dùng localStorage)
+    // Há»c viÃªn: fetch danh sÃ¡ch email tá»« sheet (khÃ´ng dÃ¹ng localStorage)
     show('login');
-    document.getElementById('loginError').textContent='⏳ Đang tải danh sách...';
+    document.getElementById('loginError').textContent='Äang táº£i danh sÃ¡ch...';
     document.getElementById('emailInput').disabled=true;
     document.querySelector('.btn-login').disabled=true;
     document.querySelector('.btn-login').style.opacity='0.4';
     fetchAccountList();
   }
+  lucide.createIcons();
 })();
 
 async function fetchAccountList(){
@@ -991,7 +1012,7 @@ async function fetchAccountList(){
   const inp=document.getElementById('emailInput');
   const btn=document.querySelector('.btn-login');
   if(!APPS_SCRIPT_URL){
-    errEl.textContent='⚠️ Giảng viên chưa kích hoạt buổi học.';
+    errEl.textContent='âš ï¸ Giáº£ng viÃªn chÆ°a kÃ­ch hoáº¡t buá»•i há»c.';
     return;
   }
   try{
@@ -1007,7 +1028,7 @@ async function fetchAccountList(){
     const sessions = sessionsJson.sessions || [];
 
     if (sessions.length === 0) {
-      errEl.textContent='⚠️ Chưa có buổi học nào đang hoạt động.';
+      errEl.textContent='âš ï¸ ChÆ°a cÃ³ buá»•i há»c nÃ o Ä‘ang hoáº¡t Ä‘á»™ng.';
       setTimeout(fetchAccountList, 5000);
       return;
     }
@@ -1018,9 +1039,9 @@ async function fetchAccountList(){
     selectorEl.style.display = 'block';
     listEl.innerHTML = sessions.map(s => `
       <div class="session-option" data-id="${s.id}" onclick="selectSession('${s.id}','${s.name.replace(/'/g,"\\'")}')">
-        <span class="so-icon">📚</span>
+        <span class="so-icon">ðŸ“š</span>
         <span class="so-name">${s.name}</span>
-        <span class="so-check">✓</span>
+        <span class="so-check">âœ”</span>
       </div>
     `).join('');
 
@@ -1038,26 +1059,26 @@ async function fetchAccountList(){
         btn.disabled=false;
         btn.style.opacity='1';
       } else {
-        errEl.textContent='👆 Hãy chọn buổi học của bạn';
+        errEl.textContent='ðŸ‘† HÃ£y chá»n buá»•i há»c cá»§a báº¡n';
       }
     } else {
-      errEl.textContent='⏳ Đang tải danh sách...';
+      errEl.textContent='â³ Äang táº£i danh sÃ¡ch...';
       setTimeout(fetchAccountList, 5000);
     }
   } catch(e){
-    errEl.textContent='⚠️ Không kết nối được — thử lại...';
+    errEl.textContent='âš ï¸ KhÃ´ng káº¿t ná»‘i Ä‘Æ°á»£c â€” thá»­ láº¡i...';
     setTimeout(fetchAccountList, 5000);
   }
 }
 
-// ── Admin PIN ──
+// â”€â”€ Admin PIN â”€â”€
 function checkPin(){
   const val=document.getElementById('pinInput').value;
   if(val===ADMIN_PIN){
     sessionStorage.setItem('admin_ok','1');
     unlockAdmin();
   } else {
-    document.getElementById('pinError').textContent='PIN không đúng.';
+    document.getElementById('pinError').textContent='PIN khÃ´ng Ä‘Ãºng.';
     document.getElementById('pinInput').classList.add('error');
     setTimeout(()=>document.getElementById('pinInput').classList.remove('error'),400);
   }
@@ -1068,7 +1089,7 @@ function unlockAdmin(){
   document.getElementById('adminBody').style.display='block';
 }
 
-// ══ ADMIN LOGIC ══
+// â•â• ADMIN LOGIC â•â•
 
 function handleFile(input){
   const file=input.files[0];
@@ -1081,23 +1102,23 @@ function handleFile(input){
       const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
       parsedEmails=extractEmails(rows);
       if(parsedEmails.length===0){
-        alert('Không tìm thấy email hợp lệ trong file. Hãy kiểm tra lại.');
+        alert('KhÃ´ng tÃ¬m tháº¥y email há»£p lá»‡ trong file. HÃ£y kiá»ƒm tra láº¡i.');
         return;
       }
       renderPreview(parsedEmails);
       showShareBox();
       logImportToSheet(parsedEmails);
       document.getElementById('btnSave').classList.add('ready');
-      document.getElementById('btnSave').textContent=`✅ Lưu ${parsedEmails.length} học viên &amp; kích hoạt`;
+      document.getElementById('btnSave').textContent=`âœ… LÆ°u ${parsedEmails.length} há»c viÃªn &amp; kÃ­ch hoáº¡t`;
       // Update label properly
-      document.getElementById('btnSave').innerHTML=`✅ Lưu ${parsedEmails.length} học viên &amp; kích hoạt`;
+      document.getElementById('btnSave').innerHTML=`âœ… LÆ°u ${parsedEmails.length} há»c viÃªn &amp; kÃ­ch hoáº¡t`;
     } catch(err){
-      alert('Lỗi đọc file: '+err.message);
+      alert('Lá»—i Ä‘á»c file: '+err.message);
     }
   };
   reader.readAsArrayBuffer(file);
   // Reset upload zone label
-  document.querySelector('.uz-text').innerHTML=`<strong>${file.name}</strong> đã tải xong`;
+  document.querySelector('.uz-text').innerHTML=`<strong>${file.name}</strong> Ä‘Ã£ táº£i xong`;
 }
 
 function extractEmails(rows){
@@ -1111,7 +1132,7 @@ function extractEmails(rows){
   }
   const startRow=col>=0?1:0;
   if(col<0){
-    // No header found — scan all cells for email pattern
+    // No header found â€” scan all cells for email pattern
     const emails=[];
     for(const row of rows){
       for(const cell of row){
@@ -1133,9 +1154,9 @@ function isEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)}
 
 function renderPreview(list){
   const preview=document.getElementById('emailPreview');
-  document.getElementById('epCount').textContent=`${list.length} email tìm thấy`;
+  document.getElementById('epCount').textContent=`${list.length} email tÃ¬m tháº¥y`;
   document.getElementById('epList').innerHTML=list.slice(0,50).map(e=>`<div class="ep-row">${e}</div>`).join('')
-    +(list.length>50?`<div class="ep-row" style="color:#666">… và ${list.length-50} email khác</div>`:'');
+    +(list.length>50?`<div class="ep-row" style="color:#666">â€¦ vÃ  ${list.length-50} email khÃ¡c</div>`:'');
   preview.style.display='block';
 }
 
@@ -1150,21 +1171,21 @@ function copyLink(){
   const url=document.getElementById('shareUrl').textContent;
   navigator.clipboard.writeText(url).then(()=>{
     const btn=document.getElementById('btnCopy');
-    btn.textContent='Đã sao chép ✓';
+    btn.textContent='ÄÃ£ sao chÃ©p âœ“';
     btn.classList.add('copied');
-    setTimeout(()=>{btn.textContent='Sao chép';btn.classList.remove('copied');},2000);
+    setTimeout(()=>{btn.textContent='Sao chÃ©p';btn.classList.remove('copied');},2000);
   });
 }
 
 async function saveAndActivate(){
   const toSave=parsedEmails.length>0?parsedEmails:emailList;
   if(toSave.length===0){
-    alert('Chưa có danh sách email. Vui lòng tải file lên trước.');
+    alert('ChÆ°a cÃ³ danh sÃ¡ch email. Vui lÃ²ng táº£i file lÃªn trÆ°á»›c.');
     return;
   }
   const sessionNameVal = document.getElementById('sessionNameInput').value.trim();
   if (!sessionNameVal) {
-    alert('Vui lòng nhập tên buổi học trước khi kích hoạt.');
+    alert('Vui lÃ²ng nháº­p tÃªn buá»•i há»c trÆ°á»›c khi kÃ­ch hoáº¡t.');
     document.getElementById('sessionNameInput').focus();
     return;
   }
@@ -1174,24 +1195,24 @@ async function saveAndActivate(){
 
   const btn=document.getElementById('btnSave');
   btn.disabled=true;
-  btn.innerHTML='⏳ Đang đồng bộ lên Sheet...';
+  btn.innerHTML='â³ Äang Ä‘á»“ng bá»™ lÃªn Sheet...';
   localStorage.setItem(LS_KEY, JSON.stringify(toSave));
   localStorage.setItem('admin_session_id', SESSION_ID);
   localStorage.setItem('admin_session_name', SESSION_NAME);
 
   const ok=await logImportToSheet(toSave);
   if(!ok){
-    btn.innerHTML='⚠️ Lưu thất bại — thử lại';
+    btn.innerHTML='âš ï¸ LÆ°u tháº¥t báº¡i â€” thá»­ láº¡i';
     btn.disabled=false;
-    alert('Không đồng bộ được danh sách lên Google Sheet. Kiểm tra kết nối và thử lại.');
+    alert('KhÃ´ng Ä‘á»“ng bá»™ Ä‘Æ°á»£c danh sÃ¡ch lÃªn Google Sheet. Kiá»ƒm tra káº¿t ná»‘i vÃ  thá»­ láº¡i.');
     return;
   }
-  // Tạo session trên sheet
+  // Táº¡o session trÃªn sheet
   await createSessionOnSheet(SESSION_ID, SESSION_NAME);
   await fetch(`${APPS_SCRIPT_URL}?action=setGameState&state=waiting&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
 
-  btn.innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
-  document.getElementById('sessionStatus').textContent = `🟢 "${SESSION_NAME}" đang hoạt động — học viên có thể đăng nhập`;
+  btn.innerHTML='âœ… ÄÃ£ lÆ°u! Chia sáº» link cho há»c viÃªn.';
+  document.getElementById('sessionStatus').textContent = `ðŸŸ¢ "${SESSION_NAME}" Ä‘ang hoáº¡t Ä‘á»™ng â€” há»c viÃªn cÃ³ thá»ƒ Ä‘Äƒng nháº­p`;
   document.getElementById('sessionStatus').style.display='block';
   document.getElementById('adminLobby').style.display='block';
   setInterval(pollAdminLobby, 5000);
@@ -1206,8 +1227,8 @@ async function pollAdminLobby() {
     const players = json.players || [];
     document.getElementById('adminLobbyCount').textContent = players.length;
     document.getElementById('adminLobbyList').innerHTML = players.length > 0
-      ? players.map(p => `<div class="admin-lobby-row">👤 ${p}</div>`).join('')
-      : '<div style="color:#6B7F79;font-style:italic;font-size:13px">Chưa có học viên nào vào...</div>';
+      ? players.map(p => `<div class="admin-lobby-row">${p}</div>`).join('')
+      : '<div style="color:#6B7F79;font-style:italic;font-size:13px">ChÆ°a cÃ³ há»c viÃªn nÃ o vÃ o...</div>';
   } catch(e) {}
 }
 
@@ -1215,21 +1236,21 @@ async function adminStartGame() {
   if (!APPS_SCRIPT_URL) return;
   try {
     await fetch(`${APPS_SCRIPT_URL}?action=setGameState&state=started&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
-    document.querySelector('.btn-start-game').textContent = '✅ Đã bắt đầu!';
+    document.querySelector('.btn-start-game').textContent = 'âœ… ÄÃ£ báº¯t Ä‘áº§u!';
     document.querySelector('.btn-start-game').disabled = true;
   } catch(e) {
-    alert('Lỗi khi bắt đầu game: ' + e.message);
+    alert('Lá»—i khi báº¯t Ä‘áº§u game: ' + e.message);
   }
 }
 
 function resetAll(){
-  if(confirm('Xoá toàn bộ danh sách email đã lưu?')){
+  if(confirm('XoÃ¡ toÃ n bá»™ danh sÃ¡ch email Ä‘Ã£ lÆ°u?')){
     localStorage.removeItem(LS_KEY);
     location.reload();
   }
 }
 
-// ── Drag-and-drop on upload zone ──
+// â”€â”€ Drag-and-drop on upload zone â”€â”€
 const zone=document.getElementById('uploadZone');
 zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='#16A34A';zone.style.background='rgba(34,197,94,.12)'});
 zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background=''});
@@ -1240,24 +1261,24 @@ zone.addEventListener('drop',e=>{
   if(file){const dt=new DataTransfer();dt.items.add(file);document.getElementById('xlFile').files=dt.files;handleFile(document.getElementById('xlFile'));}
 });
 
-// ══ LOGIN LOGIC ══
+// â•â• LOGIN LOGIC â•â•
 
 function doLogin(){
   const val=document.getElementById('emailInput').value.trim().toLowerCase();
   const err=document.getElementById('loginError');
   const inp=document.getElementById('emailInput');
   if(!SESSION_ID){
-    err.textContent='👆 Vui lòng chọn buổi học trước.';
+    err.textContent='ðŸ‘† Vui lÃ²ng chá»n buá»•i há»c trÆ°á»›c.';
     return;
   }
   if(!isEmail(val)){
-    err.textContent='Vui lòng nhập đúng định dạng email.';
+    err.textContent='Vui lÃ²ng nháº­p Ä‘Ãºng Ä‘á»‹nh dáº¡ng email.';
     inp.classList.add('error');
     setTimeout(()=>inp.classList.remove('error'),400);
     return;
   }
   if(!emailList.includes(val)){
-    err.textContent='Email này không có trong danh sách đăng ký.';
+    err.textContent='Email nÃ y khÃ´ng cÃ³ trong danh sÃ¡ch Ä‘Äƒng kÃ½.';
     inp.classList.add('error');
     setTimeout(()=>inp.classList.remove('error'),400);
     return;
@@ -1269,7 +1290,7 @@ function doLogin(){
   enterLobby(val);
 }
 
-// ══ QUIZ LOGIC ══
+// â•â• QUIZ LOGIC â•â•
 
 function startGame(){
   score={data:0,biz:0,eng:0,creative:0};
@@ -1280,7 +1301,11 @@ function startGame(){
 
 function loadQuestion(){
   const q=questions[current];
-  document.getElementById('progress').textContent=`Câu ${current+1}/${questions.length}`;
+  const isPart2 = current >= PART1_COUNT;
+  const partLabel = isPart2 ? 'Phần 2' : 'Phần 1';
+  const partCurrent = isPart2 ? current - PART1_COUNT + 1 : current + 1;
+  const partTotal = isPart2 ? questions.length - PART1_COUNT : PART1_COUNT;
+  document.getElementById('progress').textContent=`${partLabel} · Câu ${partCurrent}/${partTotal}`;
   document.getElementById('question').textContent=q.q;
   for(let i=0;i<4;i++){
     document.getElementById('t'+i).textContent=q.a[i];
@@ -1324,31 +1349,31 @@ function switchStatsTab(tab){
 async function showStats(chosen){
   const q=questions[current];
 
-  // Reset về tab thống kê mỗi câu
+  // Reset vá» tab thá»‘ng kÃª má»—i cÃ¢u
   switchStatsTab('stats');
 
   document.getElementById('your-pick').innerHTML=
-    chosen>=0?`Bạn chọn: <strong>${q.a[chosen]}</strong>`:'⏰ Hết giờ — bạn không kịp chọn';
+    chosen>=0?`Báº¡n chá»n: <strong>${q.a[chosen]}</strong>`:'â° Háº¿t giá» â€” báº¡n khÃ´ng ká»‹p chá»n';
   const isLast=(current+1>=questions.length);
-  document.getElementById('btn-next').textContent=isLast?'Xem kết quả 🏆':'Câu tiếp theo ▶';
-  document.getElementById('stat-bars').innerHTML='<div style="text-align:center;color:#6B7F79;padding:16px;font-size:14px">Đang tải kết quả lớp...</div>';
+  document.getElementById('btn-next').textContent=isLast?'Xem káº¿t quáº£ ðŸ†':'CÃ¢u tiáº¿p theo â–¶';
+  document.getElementById('stat-bars').innerHTML='<div style="text-align:center;color:#6B7F79;padding:16px;font-size:14px">Äang táº£i káº¿t quáº£ lá»›p...</div>';
 
   // Render review panel
-  document.getElementById('review-question').textContent=`Câu ${current+1}: ${q.q}`;
+  document.getElementById('review-question').textContent=`CÃ¢u ${current+1}: ${q.q}`;
   document.getElementById('review-answers').innerHTML=q.a.map((ans,i)=>{
     const isChosen=i===chosen;
     const cls=isChosen?'chosen':'neutral';
-    return `<div class="review-ans ${cls}">${ICONS[i]} ${ans}${isChosen?' ← bạn chọn':''}</div>`;
+    return `<div class="review-ans ${cls}">${ICONS[i]} ${ans}${isChosen?' â† báº¡n chá»n':''}</div>`;
   }).join('');
 
   document.getElementById('stats-overlay').classList.add('show');
 
-  // Đợi một chút để đảm bảo answer của mình đã ghi xong
+  // Äá»£i má»™t chÃºt Ä‘á»ƒ Ä‘áº£m báº£o answer cá»§a mÃ¬nh Ä‘Ã£ ghi xong
   await new Promise(r => setTimeout(r, 1200));
   const realVotes = await fetchQuestionStats(current);
 
   let votes = realVotes || [0,0,0,0];
-  // Nếu không lấy được data thật, dùng random fallback
+  // Náº¿u khÃ´ng láº¥y Ä‘Æ°á»£c data tháº­t, dÃ¹ng random fallback
   if(!realVotes){
     if(chosen>=0) votes[chosen]++;
     const total=Math.floor(Math.random()*18)+8;
@@ -1374,7 +1399,11 @@ async function showStats(chosen){
 async function continueAfterStats(){
   document.getElementById('stats-overlay').classList.remove('show');
   current++;
-  if(current<questions.length){
+  if(current === PART1_COUNT){
+    // Show part break screen
+    const pb = document.getElementById('part-break');
+    pb.style.display = 'flex';
+  } else if(current<questions.length){
     loadQuestion();
   } else {
     await saveScoreToSheet(currentPlayer, score);
@@ -1385,24 +1414,29 @@ async function continueAfterStats(){
   }
 }
 
+function startPart2(){
+  document.getElementById('part-break').style.display = 'none';
+  loadQuestion();
+}
+
 async function renderLeaderboard(myTotal){
   const lbCard = document.getElementById('lbCard');
-  lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Đang tải...</div>';
+  lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Äang táº£i...</div>';
 
   const scores = await fetchLeaderboard();
   if(scores.length === 0){
-    lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">Chưa có dữ liệu</div>';
+    lbCard.innerHTML = '<div class="lb-row" style="justify-content:center;color:#6B7F79;font-size:14px">ChÆ°a cÃ³ dá»¯ liá»‡u</div>';
     return;
   }
 
-  const medals = ['🥇','🥈','🥉'];
+  const medals = ['1','2','3'];
   lbCard.innerHTML = scores.slice(0, 10).map((s, i) => {
     const isMe = s.email.toLowerCase() === currentPlayer.toLowerCase();
     const rank = medals[i] || `${i+1}`;
     const name = s.email.split('@')[0];
     return `<div class="lb-row${isMe?' you':''}">
       <div class="lb-rank">${rank}</div>
-      <div class="lb-name">${name}${isMe?' (bạn)':''}</div>
+      <div class="lb-name">${name}${isMe?' (báº¡n)':''}</div>
       <div class="lb-score">${s.total}</div>
     </div>`;
   }).join('');
@@ -1411,13 +1445,14 @@ async function renderLeaderboard(myTotal){
 function showResult(){
   const career=Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
   const map={
-    data:{icon:'📊',title:'Data Analyst',desc:'Bạn có tư duy phân tích sắc bén. Nghề này phù hợp với người thích biến số liệu thành insight và xây dựng dashboard để hỗ trợ ra quyết định.'},
-    biz:{icon:'💼',title:'Business Analyst',desc:'Bạn giỏi kết nối giữa business và công nghệ. Nghề này cần người hiểu cả quy trình kinh doanh lẫn cách công nghệ có thể cải thiện nó.'},
-    eng:{icon:'⚙️',title:'Tech / Engineer',desc:'Bạn thích xây dựng hệ thống và lập trình. Nghề này là nền tảng để tạo ra các công cụ thực sự hoạt động trong production.'},
-    creative:{icon:'🎨',title:'Content Creator',desc:'Bạn mạnh về sáng tạo và giao tiếp. Nghề này phù hợp với người thích tạo nội dung, hình ảnh, và chiến dịch marketing nổi bật.'}
+    data:{icon:'bar-chart-2',title:'Data Analyst',desc:'Báº¡n cÃ³ tÆ° duy phÃ¢n tÃ­ch sáº¯c bÃ©n. Nghá» nÃ y phÃ¹ há»£p vá»›i ngÆ°á»i thÃ­ch biáº¿n sá»‘ liá»‡u thÃ nh insight vÃ  xÃ¢y dá»±ng dashboard Ä‘á»ƒ há»— trá»£ ra quyáº¿t Ä‘á»‹nh.'},
+    biz:{icon:'briefcase',title:'Business Analyst',desc:'Báº¡n giá»i káº¿t ná»‘i giá»¯a business vÃ  cÃ´ng nghá»‡. Nghá» nÃ y cáº§n ngÆ°á»i hiá»ƒu cáº£ quy trÃ¬nh kinh doanh láº«n cÃ¡ch cÃ´ng nghá»‡ cÃ³ thá»ƒ cáº£i thiá»‡n nÃ³.'},
+    eng:{icon:'code-2',title:'Tech / Engineer',desc:'Báº¡n thÃ­ch xÃ¢y dá»±ng há»‡ thá»‘ng vÃ  láº­p trÃ¬nh. Nghá» nÃ y lÃ  ná»n táº£ng Ä‘á»ƒ táº¡o ra cÃ¡c cÃ´ng cá»¥ thá»±c sá»± hoáº¡t Ä‘á»™ng trong production.'},
+    creative:{icon:'pen-tool',title:'Content Creator',desc:'Báº¡n máº¡nh vá» sÃ¡ng táº¡o vÃ  giao tiáº¿p. Nghá» nÃ y phÃ¹ há»£p vá»›i ngÆ°á»i thÃ­ch táº¡o ná»™i dung, hÃ¬nh áº£nh, vÃ  chiáº¿n dá»‹ch marketing ná»•i báº­t.'}
   };
   const m=map[career];
-  document.getElementById('careerIcon').textContent=m.icon;
+  document.getElementById('careerIcon').innerHTML=`<i data-lucide="${m.icon}" style="width:72px;height:72px;stroke-width:1.2"></i>`;
+  lucide.createIcons();
   document.getElementById('careerTitle').textContent=m.title;
   document.getElementById('careerDesc').textContent=m.desc;
   show('result');
@@ -1428,6 +1463,7 @@ function goReplay(){location.href=location.href.replace(/[?#].*/,'')}
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  lucide.createIcons();
 }
 </script>
 </body>
