@@ -607,15 +607,13 @@
   <div class="login-card">
     <div class="login-logo"><i data-lucide="target" style="width:52px;height:52px;stroke:var(--dua-green,#16A34A);stroke-width:1.5"></i></div>
     <div class="login-title">AI Career Quest</div>
-    <div class="login-sub">Chọn buổi học và nhập email để tham gia</div>
+    <div class="login-sub">Chọn buổi học và bắt đầu</div>
     <div class="session-selector" id="sessionSelector">
       <div class="session-selector-label">Chọn buổi học của bạn:</div>
       <div id="sessionList"></div>
     </div>
-    <input class="email-input" id="emailInput" type="email" placeholder="email@company.com"
-           onkeydown="if(event.key==='Enter')doLogin()">
     <div class="login-error" id="loginError"></div>
-    <button class="btn-login" onclick="doLogin()">Vào chơi</button>
+    <button class="btn-login" id="btnLogin" onclick="doLogin()" style="opacity:.4;pointer-events:none">Bắt đầu</button>
   </div>
 </div>
 
@@ -814,14 +812,9 @@ function selectSession(id, name) {
   document.querySelectorAll('.session-option').forEach(el => {
     el.classList.toggle('selected', el.dataset.id === id);
   });
-  // Enable email input after session selected
-  const inp = document.getElementById('emailInput');
-  const btn = document.querySelector('.btn-login');
-  if (emailList.length > 0) {
-    inp.disabled = false;
-    btn.disabled = false;
-    btn.style.opacity = '1';
-  }
+  const btn = document.getElementById('btnLogin');
+  btn.style.opacity = '1';
+  btn.style.pointerEvents = 'auto';
   document.getElementById('loginError').textContent = '';
 }
 
@@ -917,17 +910,24 @@ async function enterLobby(email) {
     badge.textContent = '📚 ' + SESSION_NAME;
     badge.style.display = 'inline-block';
   }
+  // Check if game already started before showing lobby
+  if (APPS_SCRIPT_URL) {
+    try {
+      const stateRes = await fetch(`${APPS_SCRIPT_URL}?action=getLobbyState&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
+      const stateJson = await stateRes.json();
+      if (stateJson.state === 'started') {
+        startGame();
+        return;
+      }
+    } catch(e) {}
+  }
   show('lobby');
   // Check-in vào sheet
   if (APPS_SCRIPT_URL) {
     try {
       const url = `${APPS_SCRIPT_URL}?action=checkIn&session=${encodeURIComponent(SESSION_ID)}&email=${encodeURIComponent(email)}&t=${Date.now()}`;
-      const res = await fetch(url);
-      const json = await res.json();
-      console.log('[checkIn]', json, 'session:', SESSION_ID);
-    } catch(e) {
-      console.error('[checkIn] lỗi:', e);
-    }
+      await fetch(url);
+    } catch(e) {}
   }
   // Bắt đầu poll — jitter để tránh spike đồng thời khi nhiều học sinh cùng vào
   const jitter = Math.random() * 2000;
@@ -996,44 +996,31 @@ async function pollLobby() {
       }
     }
   } else {
-    // Học viên: fetch danh sách email từ sheet (không dùng localStorage)
     show('login');
-    document.getElementById('loginError').textContent='Đang tải danh sách...';
-    document.getElementById('emailInput').disabled=true;
-    document.querySelector('.btn-login').disabled=true;
-    document.querySelector('.btn-login').style.opacity='0.4';
-    fetchAccountList();
+    // Auto-select session from URL param ?session=...
+    const urlSession = new URLSearchParams(location.search).get('session');
+    fetchSessions(urlSession);
   }
   if(window.lucide) lucide.createIcons();
 })();
 
-async function fetchAccountList(){
+async function fetchSessions(autoSelectId){
   const errEl=document.getElementById('loginError');
-  const inp=document.getElementById('emailInput');
-  const btn=document.querySelector('.btn-login');
   if(!APPS_SCRIPT_URL){
-    errEl.textContent='⚠️ Giảng viên chưa kích hoạt buổi học.';
+    errEl.textContent='⚠️ Chưa cấu hình Apps Script URL.';
     return;
   }
   try{
-    // Fetch active sessions and email list in parallel
-    const [sessionsRes, accountsRes] = await Promise.all([
-      fetch(`${APPS_SCRIPT_URL}?action=getActiveSessions&t=${Date.now()}`),
-      fetch(`${APPS_SCRIPT_URL}?action=getAccounts&t=${Date.now()}`)
-    ]);
-    const [sessionsJson, accountsJson] = await Promise.all([
-      sessionsRes.json(), accountsRes.json()
-    ]);
-
-    const sessions = sessionsJson.sessions || [];
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=getActiveSessions&t=${Date.now()}`);
+    const json = await res.json();
+    const sessions = json.sessions || [];
 
     if (sessions.length === 0) {
       errEl.textContent='⚠️ Chưa có buổi học nào đang hoạt động.';
-      setTimeout(fetchAccountList, 5000);
+      setTimeout(()=>fetchSessions(autoSelectId), 5000);
       return;
     }
 
-    // Render session options
     const selectorEl = document.getElementById('sessionSelector');
     const listEl = document.getElementById('sessionList');
     selectorEl.style.display = 'block';
@@ -1045,29 +1032,16 @@ async function fetchAccountList(){
       </div>
     `).join('');
 
-    // Auto-select if only one session
-    if (sessions.length === 1) {
-      selectSession(sessions[0].id, sessions[0].name);
-    }
+    // Auto-select by URL param or if only one session
+    const target = autoSelectId
+      ? sessions.find(s => s.id === autoSelectId)
+      : sessions.length === 1 ? sessions[0] : null;
+    if (target) selectSession(target.id, target.name);
+    else if (!autoSelectId) errEl.textContent='👆 Hãy chọn buổi học của bạn';
 
-    if(accountsJson.emails && accountsJson.emails.length>0){
-      emailList=accountsJson.emails;
-      errEl.textContent='';
-      // Only enable login if session already selected (auto-selected above when 1 session)
-      if (SESSION_ID) {
-        inp.disabled=false;
-        btn.disabled=false;
-        btn.style.opacity='1';
-      } else {
-        errEl.textContent='👆 Hãy chọn buổi học của bạn';
-      }
-    } else {
-      errEl.textContent='⏳ Đang tải danh sách...';
-      setTimeout(fetchAccountList, 5000);
-    }
   } catch(e){
     errEl.textContent='⚠️ Không kết nối được — thử lại...';
-    setTimeout(fetchAccountList, 5000);
+    setTimeout(()=>fetchSessions(autoSelectId), 5000);
   }
 }
 
@@ -1162,7 +1136,8 @@ function renderPreview(list){
 
 function showShareBox(){
   const box=document.getElementById('shareBox');
-  const url=location.href.replace(/[?#].*/,'');
+  const base=location.href.replace(/[?#].*/,'');
+  const url=SESSION_ID ? base+'?session='+encodeURIComponent(SESSION_ID) : base;
   document.getElementById('shareUrl').textContent=url;
   box.style.display='block';
 }
@@ -1212,6 +1187,7 @@ async function saveAndActivate(){
   await fetch(`${APPS_SCRIPT_URL}?action=setGameState&state=waiting&session=${encodeURIComponent(SESSION_ID)}&t=${Date.now()}`);
 
   btn.innerHTML='✅ Đã lưu! Chia sẻ link cho học viên.';
+  showShareBox();
   document.getElementById('sessionStatus').textContent = `🟢 "${SESSION_NAME}" đang hoạt động — học viên có thể đăng nhập`;
   document.getElementById('sessionStatus').style.display='block';
   document.getElementById('adminLobby').style.display='block';
@@ -1264,30 +1240,17 @@ zone.addEventListener('drop',e=>{
 // â•â• LOGIN LOGIC â•â•
 
 function doLogin(){
-  const val=document.getElementById('emailInput').value.trim().toLowerCase();
   const err=document.getElementById('loginError');
-  const inp=document.getElementById('emailInput');
   if(!SESSION_ID){
     err.textContent='Vui lòng chọn buổi học trước.';
     return;
   }
-  if(!isEmail(val)){
-    err.textContent='Vui lòng nhập đúng định dạng email.';
-    inp.classList.add('error');
-    setTimeout(()=>inp.classList.remove('error'),400);
-    return;
-  }
-  if(!emailList.includes(val)){
-    err.textContent='Email này không có trong danh sách đăng ký.';
-    inp.classList.add('error');
-    setTimeout(()=>inp.classList.remove('error'),400);
-    return;
-  }
-  currentPlayer=val;
-  document.getElementById('welcomeName').textContent=val;
-  document.getElementById('qPlayer').textContent=val;
+  const playerName='HV-'+Math.floor(Math.random()*9000+1000);
+  currentPlayer=playerName;
+  document.getElementById('welcomeName').textContent=SESSION_NAME||'Quiz';
+  document.getElementById('qPlayer').textContent=playerName;
   err.textContent='';
-  enterLobby(val);
+  enterLobby(playerName);
 }
 
 // â•â• QUIZ LOGIC â•â•
